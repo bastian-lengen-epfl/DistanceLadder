@@ -1,23 +1,25 @@
 """
 This script converts the data from Anand et al. (2021) to the desired format.
-Table 2   -> `/Data/TRGB.csv` AND `/Data/TRGB_anchors.csv` AND `/Data/SNe_TRGB.csv`
-The SNe dataframe is completed with the redshift from NED.
+Table 2   -> `/data/TRGB.csv` AND `/data/TRGB_anchors.csv` AND `/data/SNe_TRGB.csv`
+The SNe DataFrame is completed with the redshift from NED.
 """
 import os
 import argparse as ap
-import numpy as np
 import pandas as pd
 from astropy.io import fits
 from astropy.table import Table
 
 def main(TRGB_SNe_Anand, work_dir='./'):
-    Data_dir = work_dir + 'Data/'
+    data_dir = work_dir + 'data/'
+    if not os.path.exists(data_dir):
+        print(f'I will create the {data_dir} directory for you.')
+        os.mkdir(data_dir)
 
     # Values used
     mu_N4258 = 29.397
     sig_mu_N4258 = 0.032
 
-    # Start with the TRGB dataframe
+    # Start with the TRGB DataFrame
     TRGB = pd.DataFrame()
     SN = pd.DataFrame()
 
@@ -56,9 +58,9 @@ def main(TRGB_SNe_Anand, work_dir='./'):
 
     # Save everything
     print('Start writting the .csv files...')
-    TRGB.to_csv(Data_dir+'TRGB.csv',index=False)
-    TRGB_anchors.to_csv(Data_dir+'TRGB_anchors.csv', index=False)
-    SN.to_csv(Data_dir + 'SNe_TRGB.csv', index=False)
+    TRGB.to_csv(data_dir+'TRGB.csv',index=False)
+    TRGB_anchors.to_csv(data_dir+'TRGB_anchors.csv', index=False)
+    SN.to_csv(data_dir + 'SNe_TRGB.csv', index=False)
     print('Sucess')
 
 

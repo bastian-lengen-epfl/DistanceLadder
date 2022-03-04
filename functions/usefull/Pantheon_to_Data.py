@@ -1,6 +1,6 @@
 """
 This script converts the data from the Pantheon to the desired format.
-Pantheon   -> `/Data/SNe_Hubble.csv`
+Pantheon   -> `/data/SNe_Hubble.csv`
 """
 import os
 import argparse as ap
@@ -8,7 +8,10 @@ import pandas as pd
 
 
 def main(SNe_pantheon, work_dir='./'):
-    Data_dir = work_dir + 'Data/'
+    data_dir = work_dir + 'data/'
+    if not os.path.exists(data_dir):
+        print(f'I will create the {data_dir} directory for you.')
+        os.mkdir(data_dir)
 
     SN = pd.DataFrame()
     tmp = pd.read_csv(SNe_pantheon, sep=' ')
@@ -21,7 +24,7 @@ def main(SNe_pantheon, work_dir='./'):
 
     # Save everything
     print('Start writting the .csv files...')
-    SN.to_csv(Data_dir + 'SNe_Hubble.csv', index=False)
+    SN.to_csv(data_dir + 'SNe_Hubble.csv', index=False)
     print('Sucess')
 
 

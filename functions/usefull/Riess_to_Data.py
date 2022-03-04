@@ -1,9 +1,9 @@
 """
 This script converts the data from Riess et al. (2016,2019,2021) to the desired format.
-R16 CDS Table 4   -> `/Data/Cepheids.csv` AND `/Data/Cepheids_anchors.csv`
-R16 Table 5     -> /Data/SNe_Cepheids.csv. + complete it with the redshift from Table 1 Anderson (2019)
-R19 LMC         -> added to `/Data/Cepheids_anchors.csv`
-R21 MW          -> `/Data/Cepheids_MW.csv`
+R16 CDS Table 4   -> `/data/Cepheids.csv` AND `/data/Cepheids_anchors.csv`
+R16 Table 5     -> /data/SNe_Cepheids.csv. + complete it with the redshift from Table 1 Anderson (2019)
+R19 LMC         -> added to `/data/Cepheids_anchors.csv`
+R21 MW          -> `/data/Cepheids_MW.csv`
 """
 import os
 import argparse as ap
@@ -13,7 +13,10 @@ from astropy.io import fits
 from astropy.table import Table
 
 def main(Cepheids_R16, SNe_R16, Cepheids_LMC_R19, Cepheids_MW_R21, work_dir='./'):
-    Data_dir = work_dir + 'Data/'
+    data_dir = work_dir + 'data/'
+    if not os.path.exists(data_dir):
+        print(f'I will create the {data_dir} directory for you.')
+        os.mkdir(data_dir)
 
     # Values used
     R = 0.386               # Wesenheit
@@ -117,10 +120,10 @@ def main(Cepheids_R16, SNe_R16, Cepheids_LMC_R19, Cepheids_MW_R21, work_dir='./'
 
     # Save everything
     print('Start writting the .csv files...')
-    Cepheids.to_csv(Data_dir+'Cepheids.csv',index=False)
-    Cepheids_MW.to_csv(Data_dir+'Cepheids_MW.csv',index=False)
-    Cepheids_anchors.to_csv(Data_dir+'Cepheids_anchors.csv', index=False)
-    SNe_Cepheids.to_csv(Data_dir + 'SNe_Cepheids.csv', index=False)
+    Cepheids.to_csv(data_dir+'Cepheids.csv',index=False)
+    Cepheids_MW.to_csv(data_dir+'Cepheids_MW.csv',index=False)
+    Cepheids_anchors.to_csv(data_dir+'Cepheids_anchors.csv', index=False)
+    SNe_Cepheids.to_csv(data_dir + 'SNe_Cepheids.csv', index=False)
     print('Sucess')
 
 
