@@ -84,6 +84,6 @@ For the `/data/SNe_Hubble.csv`:
 
 ### Note
 Note that utility functions that convert data from Riess et al. (2016, 2019, 2021), Anand et al. (2021) and the 
-Pantheon dataset in the expected format are available in the `/functions/usefull` folder.
+Pantheon dataset in the expected format are available in the `/other_functions` folder.
 
 ## Fit
