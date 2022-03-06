@@ -1,8 +1,9 @@
+# NTM
 ### Cepheids
 include_Cepheids = True
 N_galaxies_Cep = 19         # Number of SN-host galaxies
 N_anchors_Cep = 2           # Number of anchors
-include_MW = True           # Considers the MW-Cepheids and their GAIA parallax
+include_MW = False           # Considers the MW-Cepheids and their GAIA parallax
 fixed_zp = False            # False -> Fit for the GAIA zp
 zp = -0.014                 # GAIA zp in μas, ONLY IF fixed_zp = True
 sig_zp = 0.005		        # zp uncertainty, ONLY IF fixed_zp = True
@@ -27,7 +28,7 @@ mid_VI = 1.32               # zero point for the color term (1.32 corresponds to
 
 
 ### Cepheids + TRGB (only if include_Ceph & include_TRGB = True)
-different_mu = False        # Allows a different distance for mu_Cep and mu_TRGB
+different_mu = True        # Allows a different distance for mu_Cep and mu_TRGB
 
 ### SNe
 fit_aB = True
@@ -35,6 +36,9 @@ aB = 0.715840               # Value for the Hubble diagram's intercept ONLY IF f
 sig_aB = 0.001631           # 0.71273 +/- 0.00176 Riess 2016, OR can be fitted
 z_min = 0.023               # Min redshift to consider when fitting for a_B
 z_max = 0.150               # Max redshift to consider when fitting for a_B
+
+### Plot
+show_plots = True           # If you want to display the plot
 
 ### Physics constants
 c = 299792.458              # km/s
