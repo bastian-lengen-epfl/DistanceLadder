@@ -65,7 +65,7 @@ def single_kappa_clipping(DF_dict, SNe_other, kappa=2.7, work_dir='./'):
     worst = np.max([worst_SNe, worst_Cep])
 
     ### Start iterations
-    while worst >= kappa*std:
+    while worst >= fp.kappa*std:
         index_worst = list(errors).index(worst)
         # Get the outlier in the DF_dict_outliers and delete it from the DF_dict
         if fp.include_Cepheids == True:
