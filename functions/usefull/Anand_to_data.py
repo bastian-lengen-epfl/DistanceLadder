@@ -1,7 +1,7 @@
 """
 This script converts the data from Anand et al. (2021) to the desired format.
 Table 2   -> `/data/TRGB.csv` AND `/data/TRGB_anchors.csv` AND `/data/SNe_TRGB.csv`
-The SNe DataFrame is completed with the redshift from NED.
+The SNe DataFrame is completed with the redshifts from NED.
 """
 import os
 import argparse as ap

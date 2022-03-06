@@ -11,8 +11,7 @@ from math import ceil
 
 def change_plot_parameters():
     '''
-    A function that can be called in order to change the rcParams from matplotlib. This function is called
-    everytime a plot function is called in order to obtains an homogeneity with the plots produced.
+    A function that can be called in order to change the rcParams from matplotlib.
     '''
     plt.style.use('classic')
     mpl.rcParams['axes.titlesize'] = 24
@@ -53,9 +52,9 @@ def plot_individual_PL(DF_dict, q_dict, DF_dict_outliers, work_dir='./'):
         '''
         x_lim = [-0.5, 1.1]
         # Plot errorbars
-        ax[i][j].errorbar(logP-1, L, yerr=err, marker='.', ms=10, mfc="r", mec="k", ls="", c="k", lw=0.6)
+        ax[i][j].errorbar(logP-1, L, marker='.', ms=10, mfc="r", mec="k", ls="", c="k", lw=0.6)
         if fp.outlier_rejection == True:
-            ax[i][j].plot(logP_out-1, L_out, yerr=err_out, marker='.', ms=10, mfc="lime", mec="k", ls="", c="k", lw=0.6)
+            ax[i][j].plot(logP_out-1, L_out, marker='.', ms=10, mfc="lime", mec="k", ls="", c="k", lw=0.6)
         # Plot model
         if galaxy == 'MW':
             if fp.PLR_break == False:
@@ -273,22 +272,23 @@ def plot_global_PL(DF_dict, q_dict, DF_dict_outliers, work_dir='./'):
         err = np.append(err, np.sqrt(Filtered['sig_mW'] ** 2 + Filtered['sig_mu'] ** 2))
         err_out = np.append(err_out, np.sqrt(Filtered_out['sig_mW'] + Filtered_out['sig_mu'] ** 2))
     # Load the Cepheids_MW DF
-    Cepheids_MW = DF_dict['Cepheids_MW']
-    if bool(DF_dict_outliers) == True:
-        Cepheids_MW_out = DF_dict_outliers['Cepheids_MW']
-    else:
-        Cepheids_MW_out = pd.DataFrame(columns=Cepheids_MW.columns)  # Empty DF if no outliers
-    # No need to iterate
-    logP = np.append(logP, Cepheids_MW['logP'])
-    logP_out = np.append(logP_out, Cepheids_MW_out['logP'])
-    M = np.append(M, Cepheids_MW['mW'] - Zw * Cepheids_MW['M/H'] \
-                     - 10 + 5 * np.log10(Cepheids_MW['pi']) \
-                     + 5 * zp / np.log(10) / Cepheids_MW['pi'])
-    M_out = np.append(M_out, Cepheids_MW_out['mW'] - Zw * Cepheids_MW_out['M/H'] \
-                             - 10 + 5 * np.log10(Cepheids_MW_out['pi']) \
-                             + 5 * zp / np.log(10) / Cepheids_MW_out['pi'])
-    err = np.append(err, np.sqrt(Cepheids_MW['sig_mW'] ** 2 + Cepheids_MW['sig_pi'] ** 2))
-    err_out = np.append(err_out, np.sqrt(Cepheids_MW_out['sig_mW'] + Cepheids_MW_out['sig_pi'] ** 2))
+    if fp.include_MW == True:
+        Cepheids_MW = DF_dict['Cepheids_MW']
+        if bool(DF_dict_outliers) == True:
+            Cepheids_MW_out = DF_dict_outliers['Cepheids_MW']
+        else:
+            Cepheids_MW_out = pd.DataFrame(columns=Cepheids_MW.columns)  # Empty DF if no outliers
+        # No need to iterate
+        logP = np.append(logP, Cepheids_MW['logP'])
+        logP_out = np.append(logP_out, Cepheids_MW_out['logP'])
+        M = np.append(M, Cepheids_MW['mW'] - Zw * Cepheids_MW['M/H'] \
+                         - 10 + 5 * np.log10(Cepheids_MW['pi']) \
+                         + 5 * zp / np.log(10) / Cepheids_MW['pi'])
+        M_out = np.append(M_out, Cepheids_MW_out['mW'] - Zw * Cepheids_MW_out['M/H'] \
+                                 - 10 + 5 * np.log10(Cepheids_MW_out['pi']) \
+                                 + 5 * zp / np.log(10) / Cepheids_MW_out['pi'])
+        err = np.append(err, np.sqrt(Cepheids_MW['sig_mW'] ** 2 + Cepheids_MW['sig_pi'] ** 2))
+        err_out = np.append(err_out, np.sqrt(Cepheids_MW_out['sig_mW'] + Cepheids_MW_out['sig_pi'] ** 2))
 
     ### Plot
     #  Create the figure
@@ -349,4 +349,100 @@ def plot_global_PL(DF_dict, q_dict, DF_dict_outliers, work_dir='./'):
     plt.savefig(fig_dir + 'PL_global.png', bbox_inches='tight', dpi=200)
     return
 
-def plot_SNe(DF_dict, q_dict, DF_dict_outliers)
+def plot_SNe(DF_dict, q_dict, DF_dict_outliers, work_dir='./'):
+    '''
+    Display the global redshift-magnitude plot for the SNe_Hubble dataset.
+
+    :type   DF_dict: dictionary of pandas DataFrame
+    :param  DF_dict: Dictionary that contains the DataFrame that was fitted.
+    :type   q_dict: dictionary
+    :param  q_dict: Dictionary that contains the parameters of the fits.
+    :type   DF_dict_outliers: dictionary of pandas DataFrame
+    :param  DF_dict_outliers: Dictionary that contains the DataFrame of the outliers. By default an empty dict.
+    :type   work_dir: string
+    :param  work_dir: working directory, by default ./
+    '''
+    ### Useful functions
+    def logczexpansion(z):
+        return np.log10(
+            fp.c * z * (1 + 1 / 2 * (1 - fp.q0) * z - 1 / 6 * (1 - fp.q0 - 3 * fp.q0 ** 2 + fp.j0) * z ** 2))
+
+    ### Check and create the figure directory
+    fig_dir = work_dir + 'figure/'
+    if not os.path.exists(fig_dir):
+        print(f'I will create the {fig_dir} directory for you.')
+        os.mkdir(fig_dir)
+
+    ### Load the fit parameters
+    if fp.fit_aB==False:
+        aB = fp.aB
+    else:
+        aB = (q_dict['5logH0'][0] - q_dict['MB'][0] - 25)/5
+
+    ### Load the SNe DF
+    SNe = DF_dict['SNe_Hubble']
+    if bool(DF_dict_outliers) == True:
+        SNe_out = DF_dict_outliers['SNe_Hubble']
+    else:
+        SNe_out = pd.DataFrame(columns=SNe.columns)  # Empty DF if no outliers
+
+    filter = ((SNe['z']<fp.z_max)&(SNe['z']>fp.z_min))
+    SNe_out = pd.concat([SNe_out, SNe[~filter]], ignore_index=True)
+    SNe = SNe[filter].reset_index(drop=True)
+
+    ### Plot
+    # Create the figure
+    fig, ax = plt.subplots(nrows=2, ncols=1, gridspec_kw={'height_ratios': [3, 1]})
+    fig.set_figheight(7)
+    fig.set_figwidth(12)
+    fig.subplots_adjust(wspace=0, hspace=0)
+
+    # Top panel
+    ax[0].plot(logczexpansion(SNe_out['z']), 0.2 * SNe_out['mB'], marker='.', ms=12, mfc="lime", mec="k", ls="", c="k", lw=3)
+    ax[0].plot(logczexpansion(SNe['z']), 0.2 * SNe['mB'], marker='.', ms=12, mfc="r", mec="k", ls="", c="k", lw=3)
+    tmp = ax[0].get_xlim()
+    ax[0].plot(tmp, np.array(tmp) - aB, 'k', lw=2)  # slope 1 by mean
+    ax[0].set_xlim(tmp)
+    tmp = ax[0].get_ylim()
+    ax[0].plot(logczexpansion(np.array([fp.z_min, fp.z_min])), tmp, c='k', ls='--', lw=1)
+    ax[0].text(logczexpansion(fp.z_min) + 0.05, tmp[1] - 0.15, f'z={fp.z_min}', size=16)
+    ax[0].plot(logczexpansion(np.array([fp.z_max, fp.z_max])), tmp, c='k', ls='--', lw=1)
+    ax[0].text(logczexpansion(fp.z_max) + 0.05, tmp[1] - 0.15, f'z={fp.z_max}', size=16)
+    ax[0].set_ylim(tmp)
+    ax[0].tick_params(
+        axis='x',  # changes apply to the x-axis
+        which='both',  # both major and minor ticks are affected
+        bottom=False,  # ticks along the bottom edge are off
+        top=False,  # ticks along the top edge are off
+        labelbottom=False)  # labels along the bottom edge are off
+    ax[0].set_ylabel('0.2m$_B$ [mag]', size=16)
+    ax[0].tick_params(axis='both', which='major', labelsize=12)
+
+    # Bottom panel
+    ax[1].plot(logczexpansion(SNe_out['z']), 0.2 * SNe_out['mB'] - (logczexpansion(SNe_out['z']) - aB), \
+               marker='D', ms=5, mfc="none", mec="limegreen", ls="", c="k", lw=0)
+    ax[1].plot(logczexpansion(SNe['z']), 0.2 * SNe['mB'] - (logczexpansion(SNe['z']) - aB), \
+               marker='D', ms=5, mfc="none", mec="r", ls="", c="k", lw=0)
+    tmp = [ax[0].get_xlim()[0], ax[0].get_xlim()[1]]
+    ax[1].plot(tmp, [0, 0], c='k', ls='--', lw=3)
+    ax[1].set_xlim(tmp)
+    tmp = ax[1].get_ylim()
+    ax[1].plot(logczexpansion(np.array([fp.z_min, fp.z_min])), tmp, c='k', ls='--', lw=1)
+    ax[1].plot(logczexpansion(np.array([fp.z_max, fp.z_max])), tmp, c='k', ls='--', lw=1)
+    ax[1].set_ylim(tmp)
+    ax[1].tick_params(axis='both', which='major', labelsize=12)
+    ax2 = ax[1].twiny()  # ax1 and ax2 share y-axis
+    ax2.plot(logczexpansion(SNe_out['z']), 0.2 * SNe_out['mB'] - (logczexpansion(SNe_out['z']) - aB), '.', markersize=0)
+    ax[1].set_xlabel('log{cz[1+0.5(1-q$_0$)z-(1/6)(1-q$_0$-3q$_0^2$+1)z$^2$]}', size=16)
+    ax[1].set_ylabel('$\Delta$0.2m$_B$ [mag]', size=16)
+
+    # Save
+    print('Saving the resdhift-magnitude plot...')
+    plt.savefig(fig_dir + 'redshift_magnitude.png', bbox_inches='tight', dpi=200)
+    return
+
+
+
+
+
+    return

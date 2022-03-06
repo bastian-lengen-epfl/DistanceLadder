@@ -3,7 +3,7 @@ This module contains the functions that correct for different relativistic effec
 from Anderson (2019, 2021).
 """
 import numpy as np
-import Fit_parameters as Fp
+import fit_parameters as fp
 
 def RLB_correction(DF_dict):
     '''
@@ -95,7 +95,7 @@ def K_corr_Cep(DF_dict, filter='W'):
                               + (m * Cepheids_anchors.loc[i, 'logP'] + c) * Cepheids_anchors.loc[i,'z'] * Cepheids_anchors.loc[i,'V-I'] \
                               - 0.105 * Cepheids_anchors.loc[i,'z'] * Cepheids_anchors.loc[i,'V-I'] # For F99 redshift law
 
-    if Fp.include_MW == True:
+    if fp.include_MW == True:
         Cepheids_MW = DF_dict['Cepheids_MW']
         for i in Cepheids_MW.index:
             m, c = interpolate(Cepheids_MW.loc[i, 'z'], z_ref, m_ref, c_ref)
@@ -107,7 +107,7 @@ def K_corr_Cep(DF_dict, filter='W'):
 
 def K_corr_TRGB(DF_dict, filter='I'):
     '''
-    Return the corrected the DF_dict for the TRGB K-corrections following the methodology from Anderson (2021)
+    Return the corrected the DF_dict for the TRGB K-corrections following the methodology from Anderson (2021).
 
     :type   DF_dict: dictionary of pandas DataFrame
     :param  DF_dict: Dictionary that contains the DataFrame that will be fitted.
