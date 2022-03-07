@@ -16,7 +16,7 @@ def load_data(work_dir='./'):
     Data_dir = work_dir + 'data/'
 
     # Create an empty dictionnary of dataset
-    DF_dict={}
+    DF_dict=dict()
 
     # Loads the Cepheids related DataFrame
     if fp.include_Cepheids==True:
