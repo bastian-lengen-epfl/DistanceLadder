@@ -87,3 +87,5 @@ Note that utility functions that convert data from Riess et al. (2016, 2019, 202
 Pantheon dataset in the expected format are available in the `/other_functions` folder.
 
 ## Fit
+To run the simulation with the data from the `/data` folder and the parameters from the `fit_parameters.py`,
+just run the command `python3 run.py` from the working directory. 
