@@ -1,5 +1,5 @@
 """
-This script converts the data from Riess et al. (2016,2019,2021) to the desired format.
+This script converts the data from Riess et al. (2016,2019,2021a) to the desired format.
 R16 CDS Table 4   -> `/data/Cepheids.csv` AND `/data/Cepheids_anchors.csv`
 R16 Table 5     -> /data/SNe_Cepheids.csv. + complete it with the redshift from Table 1 Anderson (2019)
 R19 LMC         -> added to `/data/Cepheids_anchors.csv`

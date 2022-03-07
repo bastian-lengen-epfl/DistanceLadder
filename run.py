@@ -65,6 +65,10 @@ def main() -> int:
                 plot_global_PL(DF_dict, q_dict, DF_dict_outliers)
             if fp.fit_aB == True:
                 plot_SNe(DF_dict, q_dict, DF_dict_outliers)
+
+    ### Save results
+    pass
+
     return 0
 
 if __name__ == '__main__':

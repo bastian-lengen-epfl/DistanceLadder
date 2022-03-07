@@ -1,7 +1,7 @@
 # Distance ladder
 
-This folder contains all the scripts to process multivariate regression on the Cepheid- and/or TRGB-based distanced ladder.
-
+This folder contains all the scripts to process multivariate regression on the Cepheid- and/or TRGB-based distanced 
+ladder. The models used are initially based on Riess (2021b) but modified according to our needs.
 ## Fit setup and data pre-processing
 Two thing have to be done before fitting the distance ladder:
 * Modify the `fit_parameters.py` in order to choose what model you want to fit.
@@ -20,7 +20,7 @@ The `.csv` have to be in a specific form in order to run the code. The columns n
 
 For the `/data/Cepheids.csv`the columns have to be in that order:
 1. Galaxy host
-2. log10 of the pulsation period
+2. Log10 of the pulsation period
 3. Wesenheit magnitude
 4. Uncertainty of the Wesenheit magnitude
 5. Metallicity [Fe/H] or [O/H] (it has to be consistent between all Cepheids)
@@ -29,10 +29,10 @@ For the `/data/Cepheids.csv`the columns have to be in that order:
 
 For the `/data/Cepheids_MW.csv`:
 1. Galaxy host (Here `'MW'`)
-2. log10 of the pulsation period
+2. Log10 of the pulsation period
 3. Wesenheit magnitude
 4. Uncertainty of the Wesenheit magnitude
-5. Metallicity [Fe/H] or [O/H] (it has to be consistent between all cepheids
+5. Metallicity [Fe/H] or [O/H] (it has to be consistent between all Cepheids)
 6. Redshift (Here `z=0`)
 7. Color term V-I, only used for K-corrections. It can be a column full of `NaN` if you will not use the K-corrections
 8. Parallax
@@ -40,10 +40,10 @@ For the `/data/Cepheids_MW.csv`:
 
 For the `/data/Cepheids_anchors.csv`:
 1. Galaxy host
-2. log10 of the pulsation period
+2. Log10 of the pulsation period
 3. Wesenheit magnitude
 4. Uncertainty of the Wesenheit magnitude
-5. Metallicity [Fe/H] or [O/H] (it has to be consistent between all cepheids
+5. Metallicity [Fe/H] or [O/H] (it has to be consistent between all Cepheids)
 6. Redshift
 7. Color term V-I, only used for K-corrections. It can be a column full of `NaN` if you will not use the K-corrections
 8. Geometric distance modulus of the anchor galaxy
@@ -57,7 +57,7 @@ For the `/data/TRGB.csv`:
 3. Uncertainty of the observed I-band magnitude
 4. Absorbtion in the I-band
 5. Redshift of the host galaxy
-6. A color term V-I. It can be a column full of `NaN` if the model choose don't use the color term.
+6. Color term V-I. It can be a column full of `NaN` if the model choose don't use the color term.
 
 For the `/data/TRGB_anchors.csv`:
 1. Galaxy host 
@@ -65,7 +65,7 @@ For the `/data/TRGB_anchors.csv`:
 3. Uncertainty of the observed I-band magnitude
 4. Absorbtion in the I-band
 5. Redshift of the host galaxy
-6. A color term V-I. It can be a column full of `NaN` if the model choose don't use the color term.
+6. Color term V-I. It can be a column full of `NaN` if the model choose don't use the color term.
 7. Geometric distance modulus of the anchor galaxy
 8. Uncertainty of the geometric distance modulus
 
@@ -83,7 +83,7 @@ For the `/data/SNe_Hubble.csv`:
 5) Uncertainty of the redshift
 
 ### Note
-Note that utility functions that convert data from Riess et al. (2016, 2019, 2021), Anand et al. (2021) and the 
+Note that utility functions that convert data from Riess et al. (2016, 2019, 2021a), Anand et al. (2021) and the 
 Pantheon dataset in the expected format are available in the `/other_functions` folder.
 
 ## Fit

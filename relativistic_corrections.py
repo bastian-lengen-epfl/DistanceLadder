@@ -1,6 +1,6 @@
 """
 This module contains the functions that correct for different relativistic effect by following the methodology
-from Anderson (2019, 2021).
+from Anderson (2019, 2022), [2019A&A...631A.165A] and [2022A&A...658A.148A].
 """
 import numpy as np
 import fit_parameters as fp
@@ -8,7 +8,7 @@ import fit_parameters as fp
 def RLB_correction(DF_dict):
     '''
     Return the corrected the DF_dict for the Redshift Leavitt Bias (RLB) following the methodology from
-    Anderson (2019) for Cepheids
+    Anderson (2019) [2019A&A...631A.165A] for Cepheids
 
     :type   DF_dict: dictionary of pandas DataFrame
     :param  DF_dict: Dictionary that contains the DataFrame that will be fitted.
@@ -24,6 +24,7 @@ def RLB_correction(DF_dict):
 def K_corr_Cep(DF_dict, filter='W'):
     '''
     Return the corrected the DF_dict for the Cepheids K-corrections following the methodology from Anderson (2021)
+    [2022A&A...658A.148A]
 
     :type   DF_dict: dictionary of pandas DataFrame
     :param  DF_dict: Dictionary that contains the DataFrame that will be fitted.
@@ -34,7 +35,7 @@ def K_corr_Cep(DF_dict, filter='W'):
     # Defines an interpolate function to interpolate between reference points from Anderson (2021)
     def interpolate(z, z_ref, m_ref, c_ref):
         '''
-        Returns the m and c of the linear interpolation between the reference values from Anderson (2021)
+        Returns the m and c of the linear interpolation between the reference values from Anderson (2022)
 
         :param z:       redshif of the Cepheid
         :type:          double
@@ -107,7 +108,8 @@ def K_corr_Cep(DF_dict, filter='W'):
 
 def K_corr_TRGB(DF_dict, filter='I'):
     '''
-    Return the corrected the DF_dict for the TRGB K-corrections following the methodology from Anderson (2021).
+    Return the corrected the DF_dict for the TRGB K-corrections following the methodology from Anderson (2022)
+    [2022A&A...658A.148A]
 
     :type   DF_dict: dictionary of pandas DataFrame
     :param  DF_dict: Dictionary that contains the DataFrame that will be fitted.

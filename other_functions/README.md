@@ -1,5 +1,5 @@
 # How to use the functions
-These functions are available to convert data from Riess et al. (2016, 2019, 2021), Anand et al. (2021) and the Pantheon dataset to the expected format.
+These functions are available to convert data from Riess et al. (2016, 2019, 2021a), Anand et al. (2021) and the Pantheon dataset to the expected format.
 
 ## Riess_to_data.py
 To convert the files (.csv/.fits) from R16, R19 and R21 to the expected format, run from the working directory the command:
