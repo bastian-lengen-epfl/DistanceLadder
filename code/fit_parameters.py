@@ -17,7 +17,7 @@ Kcorr_Cep = False           # Correct for the K-corrections (See Anderson 2022, 
 
 
 ### TRGB
-include_TRGB = False
+include_TRGB = True
 N_galaxies_TRGB = 12        # Number of SN-host galaxies
 N_anchors_TRGB = 1          # Number of anchors
 Kcorr_TRGB = False          # Correct for the K-corrections (See Anderson 2022, [2022A&A...658A.148A])
@@ -25,7 +25,7 @@ use_color = True            # Consider the color term (V-I) for the TRGB (See An
 mid_VI = 1.32               # Pivot color for the color term, usually the value from N4258
 
 ### Cepheids + TRGB (only if include_Ceph & include_TRGB = True)
-different_mu = True        # Allow a different distance for mu_Cep and mu_TRGB
+different_mu = False        # Allow a different distance for mu_Cep and mu_TRGB
 
 ### SNe
 fit_aB = True

@@ -27,7 +27,6 @@ def single_kappa_clipping(DF_dict, SNe_other, kappa=2.7, work_dir='./'):
     :type   work_dir: string
     :param  work_dir: working directory, by default ./
     '''
-    data_dir = work_dir + 'data/'
 
     ### Create the DF_dict_outliers for the outliers and load the DF_dict
     DF_dict_outliers = dict()
@@ -120,9 +119,9 @@ def single_kappa_clipping(DF_dict, SNe_other, kappa=2.7, work_dir='./'):
         worst = np.max([worst_SNe, worst_Cep])
 
     ### Save the outliers
-    out_dir = data_dir + 'outliers/'
+    out_dir = work_dir + 'outliers/'
     if not os.path.exists(out_dir):
-        print("I will create the outliers directory for you !")
+        print(f'I will create the {out_dir} directory for you !')
         os.mkdir(out_dir)
     if fp.include_Cepheids == True:
         N = len(DF_dict_outliers['Cepheids'])

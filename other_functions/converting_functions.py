@@ -11,8 +11,11 @@ import numpy as np
 import pandas as pd
 from astropy.io import fits
 from astropy.table import Table
+import warnings
+from astropy.utils.exceptions import AstropyWarning
 
-def Riess_to_data(Cepheids_R16, SNe_R16, Cepheids_LMC_R19, Cepheids_MW_R21,  data_static_dir='../data_static/'):
+
+def Riess_to_data(Cepheids_R16, SNe_R16, Cepheids_LMC_R19, Cepheids_MW_R21,  data_static_dir='./data_static/'):
     '''
     This script converts the data from R16, R19, R21 to the desired format.
     R16 CDS Table 4     -> Cepheids.csv and Cepheids_anchors.csv
@@ -22,13 +25,13 @@ def Riess_to_data(Cepheids_R16, SNe_R16, Cepheids_LMC_R19, Cepheids_MW_R21,  dat
     The SNe_Cepheids.csv is completed with the redshift from NED.
 
     :type   Cepheids_MW_R21: str
-    :param  Cepheids_R16: Path to the .csv file from R16 (Cepheids).
+    :param  Cepheids_R16: Path to the .csv file from R16 (Cepheids) in the ./data_static/ directory.
     :type   SNe_R16: str
-    :param  SNe_R16: Path to the .csv file from R16 (SNe).
+    :param  SNe_R16: Path to the .csv file from R16 (SNe) in the ./data_static/ directory.
     :type   Cepheids_LMC_R19: str
-    :param  Cepheids_LMC_R19: Path to the .csv file from R19.
+    :param  Cepheids_LMC_R19: Path to the .csv file from R19 in the ./data_static/ directory.
     :type   Cepheids_MW: str
-    :param  Cepheids_MW: Path to the .csv file from R21.
+    :param  Cepheids_MW: Path to the .csv file from R21 in the ./data_static/ directory.
     :type   data_static_dir: str
     :param  data_static_dir: Path to the data_static directory
     '''
@@ -48,6 +51,15 @@ def Riess_to_data(Cepheids_R16, SNe_R16, Cepheids_LMC_R19, Cepheids_MW_R21,  dat
               'N3982': 3.70, 'N4038':5.48, 'N4424':1.46, 'N4536':6.03, 'N4639':3.40, 'N5584':5.46, \
               'N5917':6.35, 'N7250': 3.89, 'U9391': 6.38, 'M31': -1.00}
 
+    # Rewrite files path:
+    Cepheids_R16     = data_static_dir + Cepheids_R16
+    SNe_R16          = data_static_dir + SNe_R16
+    Cepheids_LMC_R19 = data_static_dir + Cepheids_LMC_R19
+    Cepheids_MW_R21  = data_static_dir + Cepheids_MW_R21
+
+    # Remove warning about upper and lower-case managment
+    warnings.simplefilter('ignore', category=AstropyWarning)
+
     # Start with the R16 Cepheids
     if Cepheids_R16[-4:]=='.csv':
         tmp = pd.read_csv(Cepheids_R16, sep=',')
@@ -63,8 +75,7 @@ def Riess_to_data(Cepheids_R16, SNe_R16, Cepheids_LMC_R19, Cepheids_MW_R21,  dat
     Cepheids['mW'] = tmp['F160W'] - R * tmp['V-I']
     Cepheids['sig_mW'] = tmp['sigTot']
     Cepheids['Fe/H'] = tmp['[O/H]']-Z_sun
-    Cepheids['Gal'][Cepheids['Gal'] == 'M101 '] = 'M101' #Rename 'M101 ' to 'M101'
-    Cepheids['Gal'][Cepheids['Gal'] == 'M31  '] = 'M31'  # Rename 'M31  ' to 'M31'
+    Cepheids['Gal'] = Cepheids['Gal'].replace(['M101 ', 'M31  '],['M101', 'M31'])  # Remove white spaces
     for i in Cepheids.index:
         Cepheids.loc[i, 'z'] = z_dict[Cepheids.loc[i, 'Gal']]*1e-3
     Cepheids['V-I'] = tmp['V-I']
@@ -139,18 +150,21 @@ def Riess_to_data(Cepheids_R16, SNe_R16, Cepheids_LMC_R19, Cepheids_MW_R21,  dat
     SNe_Cepheids.to_csv(data_static_dir + 'SNe_Cepheids.csv', index=False)
     return
 
-def H1PStars_to_data(Cepheids_MW, erase = False,  data_static_dir='../data_static/'):
+def H1PStars_to_data(Cepheids_MW, erase = False,  data_static_dir='./data_static/'):
     '''
     This function converts the data from Mauricio to the desired format. It can either add the MW Cepheids to the
     existing `/data_static/Cepheids_MW.csv` or erase it.
 
     :type   Cepheids_MW: str
-    :param  Cepheids_MW: Path to the .csv file from H1PStars.
+    :param  Cepheids_MW: Path to the .csv file from H1PStars in the ./data_static/ directory.
     :type   erase: bool
     :param  erase: Choose if you want to erase the Cepheids from R21 from the Cepheids_MW.csv, otherwise complete the .csv.
     :type   data_static_dir: str
     :param  data_static_dir: Path to the data_static directory
     '''
+    # Rewrite files path:
+    Cepheids_MW = data_static_dir + Cepheids_MW
+
     # Load data
     if Cepheids_MW[-4:] == '.csv':
         tmp = pd.read_csv(Cepheids_MW, sep=',')
@@ -183,14 +197,14 @@ def H1PStars_to_data(Cepheids_MW, erase = False,  data_static_dir='../data_stati
 
     return
 
-def Anand_to_data(TRGB_SNe_Anand, data_static_dir='../data_static/'):
+def Anand_to_data(TRGB_SNe_Anand, data_static_dir='./data_static/'):
     '''
     This script converts the data from Anand et al. (2021) to the desired format.
     Table 2         -> TRGB.csv, TRGB_anchors.csv and SNe_TRGB.csv
     The SNe_TRGBcsv is completed it with the redshift from NED.
 
     :type   TRGB_SNe_Anand: str
-    :param  TRGB_SNe_Anand: Path to the .csv file from Anand et al. (2021).
+    :param  TRGB_SNe_Anand: Path to the .csv file from Anand et al. (2021) in the ./data_static/ directory.
     :type   data_static_dir: str
     :param  data_static_dir: Path to the data_static directory
     '''
@@ -208,6 +222,10 @@ def Anand_to_data(TRGB_SNe_Anand, data_static_dir='../data_static/'):
               'N4038': 0.00542, 'N4424': 0.00146, 'N4526': 0.00206, 'N4536': 0.00603, 'N5643': 0.00400,
               'N4258': 0.00149}
 
+    # Rewrite files path:
+    TRGB_SNe_Anand = data_static_dir + TRGB_SNe_Anand
+
+    # Convert
     if (TRGB_SNe_Anand[-4:]=='.csv'):
         tmp = pd.read_csv(TRGB_SNe_Anand, sep=',')
     elif (TRGB_SNe_Anand[-5:]=='.fits'):
@@ -242,14 +260,19 @@ def Anand_to_data(TRGB_SNe_Anand, data_static_dir='../data_static/'):
     SN.to_csv(data_static_dir + 'SNe_TRGB.csv', index=False)
     return
 
-def Pantheon_to_data(SNe_pantheon, data_static_dir='../data_static/'):
+def Pantheon_to_data(SNe_pantheon, data_static_dir='./data_static/'):
     '''
+    This script converts the data from the pantheon sample (Scolnic et al. 2018) to the desired format.
+    Pantheon.txt         -> SNe_Hubble.csv
 
     :type   SNe_pantheon: str
     :param  SNe_pantheon: Path to the .txt file from Scolnic et al. (2021).
     :type   data_static_dir: str
-    :param  data_static_dir: Path to the data_static directory
+    :param  data_static_dir: Path to the data_static directory in the ./data_static/ directory.
     '''
+    # Rewrite files path:
+    SNe_pantheon = data_static_dir + SNe_pantheon
+
     # Create the DataFrame
     SN = pd.DataFrame()
     tmp = pd.read_csv(SNe_pantheon, sep=' ')
