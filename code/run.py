@@ -4,6 +4,7 @@ print and save the result of the fit and draw a few plots.
 '''
 import sys
 import os
+import argparse as ap
 import fit_parameters as fp
 import pandas as pd
 import shutil
@@ -15,13 +16,12 @@ from outliers_rejection import single_kappa_clipping
 from plots import plot_individual_PL, plot_global_PL, plot_SNe
 
 
-def DistanceLadder(fit_name):
+def run(fit_name, work_dir):
     ### Create the working directory:
-    work_dir = './work_dir/'
     if not os.path.exists(work_dir):
         print(f'I will create the {work_dir} directory for you !')
         os.mkdir(work_dir)
-    work_dir = work_dir + 'name/'
+    work_dir = work_dir + fit_name + '/'
     if not os.path.exists(work_dir):
         print(f'I will create the {work_dir} directory for you !')
         os.mkdir(work_dir)
@@ -112,6 +112,19 @@ def DistanceLadder(fit_name):
 
     return 0
 
-if __name__ == '__main__':
-    sys.exit(main())
+if __name__=='__main__':
+    parser = ap.ArgumentParser(prog="python {}".format(os.path.basename(__file__)),
+                               description='Fits the distance ladder accoring to the data from the ./data_static folder'
+                                           'and the fit parameters from the ./code/fit_parameters.py file. The results'
+                                           'are save in the given working directory.',
+                               formatter_class=ap.RawTextHelpFormatter)
+    parser.add_argument(type=str, dest='fit_name', metavar='fit_name',
+                        help='Give a name to your fit. Determines the name of the folder containing all the results'
+                             'from the fit.')
+    parser.add_argument('--dir', type=str, dest='work_dir', metavar='work_dir',
+                        default='./work_dir/',
+                        help='Name of the working directory')
+
+    args = parser.parse_args()
+    run(args.fit_name, args.work_dir)
 

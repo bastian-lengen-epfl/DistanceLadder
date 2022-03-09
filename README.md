@@ -87,13 +87,17 @@ If you want to generate these `.csv` from the pre-loaded data from `/data_static
 `/data_static/Anand/`, `/data_static/H1PStars/`, a script is available in the `/other_functions/` folder. 
 
 Run, from the `./` directory, the command:
-`python3 other_functions/setup.py RH` . 
+`python3 other_functions/setup.py RH [--dir 'path_to_data_static']` . 
 
-Or the command: `python3 setup.py RH --dir 'path_to_data_static'`
+Or the command: `python3 setup.py RH `
 
 You can choose
-if you want to use the MW Cepheids from R21 (R), from H1PStars (H) or for both (RH). 
+if you want to use the MW Cepheids from R21 (R), from H1PStars (H) or both (RH). 
 
 ## Fit
-To run the simulation with the data from the `/data_static` folder and the parameters from the `fit_parameters.py`,
-just run the command `python3 run.py` from the working directory. 
+To run the simulation with the data from the `/data_static/` folder and the parameters from the `fit_parameters.py`,
+just run, from the `./` directory, the command:
+
+`python3 code/run.py fit_name [--dir 'path_to_work_dir]'`
+
+The results will be saved in your working directory (by default `./work_dir/`).
