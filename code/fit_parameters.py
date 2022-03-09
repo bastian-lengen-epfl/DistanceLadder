@@ -17,7 +17,7 @@ Kcorr_Cep = False           # Correct for the K-corrections (See Anderson 2022, 
 
 
 ### TRGB
-include_TRGB = True
+include_TRGB = False
 N_galaxies_TRGB = 12        # Number of SN-host galaxies
 N_anchors_TRGB = 1          # Number of anchors
 Kcorr_TRGB = False          # Correct for the K-corrections (See Anderson 2022, [2022A&A...658A.148A])
