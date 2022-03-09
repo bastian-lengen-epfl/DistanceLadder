@@ -19,7 +19,7 @@ def Riess_to_data(Cepheids_R16, SNe_R16, Cepheids_LMC_R19, Cepheids_MW_R21,  dat
     R16 Table 5         -> SNe_Cepheids.csv
     R19 LMC             -> Cepheids_anchors.csv
     R21 MW              -> Cepheids_MW.csv
-    The SNe_Cepheids.csv is completed it with the redshift from NED.
+    The SNe_Cepheids.csv is completed with the redshift from NED.
 
     :type   Cepheids_MW_R21: str
     :param  Cepheids_R16: Path to the .csv file from R16 (Cepheids).
