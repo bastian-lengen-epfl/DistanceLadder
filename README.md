@@ -28,7 +28,7 @@ For the `/data_static/Cepheids.csv`the columns have to be in that order:
 7. Color term V-I, only used for K-corrections. It can be a column full of `NaN` if you will not use the K-corrections
 
 For the `/data_static/Cepheids_MW.csv`:
-1. Galaxy host (Here `'MW'`)
+1. Galaxy host. Here the name stands for the dataset used (`'MW1'` for dataset1, `'MW2'` for 2, ...).
 2. Log10 of the pulsation period
 3. Wesenheit magnitude
 4. Uncertainty of the Wesenheit magnitude

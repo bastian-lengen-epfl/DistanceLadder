@@ -54,7 +54,7 @@ def run(fit_name, work_dir):
             DF_dict, DF_dict_outliers = single_kappa_clipping(DF_dict, SNe_other, kappa=2.7, work_dir=work_dir)
     # Fit
     print('Computing H0...')
-    y, q_dict, L= fit_distance_ladder(DF_dict)
+    y, q_dict, L, Sigma2 = fit_distance_ladder(DF_dict)
 
     ### Save setup
     print('Saving the fit_parameters.py used...')
@@ -78,7 +78,7 @@ def run(fit_name, work_dir):
         DF_dict['SNe_Hubble'].to_csv(data_dir + 'SNe_Hubble.csv', index=False)
 
     ### Save results
-    print('Pickling the variable y, q_dict and L...')
+    print('Pickling the variable y, q_dict, L and Sigma2...')
     y_pkl = open(work_dir + 'y.pickle', 'wb')
     pickle.dump(y, y_pkl)
     y_pkl.close()
@@ -88,6 +88,9 @@ def run(fit_name, work_dir):
     L_pkl = open(work_dir + 'L.pickle', 'wb')
     pickle.dump(L, L_pkl)
     L_pkl.close()
+    Sigma2_pkl = open(work_dir + 'Sigma2.pickle', 'wb')
+    pickle.dump(Sigma2,Sigma2_pkl)
+    Sigma2_pkl.close()
 
     ### Plots
     if fp.show_plots == True:

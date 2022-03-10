@@ -5,12 +5,14 @@ import numpy as np
 import fit_parameters as fp
 
 
-def fit_distance_ladder(DF_dict):
+def fit_distance_ladder(DF_dict, cov_matrix = np.array([])):
     '''
     Return the raw results of the fit parameters.
 
     :type   DF_dict: dictionary of pandas DataFrame
     :param  DF_dict: Dictionary that contains the DataFrame that will be fitted.
+    :type   cov_matrix: numpy matrix
+    :param  cov_matrix: Covariance matrix that will be used by the fit function. By default empty
     '''
 
     ### Useful functions
@@ -39,7 +41,9 @@ def fit_distance_ladder(DF_dict):
         # The MW Cepheids
         if fp.include_MW == True:
             Cepheids_MW = DF_dict['Cepheids_MW']
-            #  The SNe from the Cepheid-host galaxy
+            if fp.multiple_zp == True:
+                list_MW = Cepheids_MW['Gal'].drop_duplicates().reset_index(drop=True) # List of MW dataset
+        #  The SNe from the Cepheid-host galaxy
         SNe_Cepheids = DF_dict['SNe_Cepheids']
 
         ### Complete y & diag for the covariance matrix
@@ -59,6 +63,9 @@ def fit_distance_ladder(DF_dict):
         # Milky Way Cepheids
         if fp.include_MW == True:
             if fp.fixed_zp == True:
+                if fp.multiple_zp == True:
+                    print('ERROR! you cannot use a fixed zp with multiple zp.')
+                    return
                 y = np.append(y, Cepheids_MW['mW'] \
                               - 10 + 5 * np.log10(Cepheids_MW['pi']) \
                               + 5 / np.log(10) * fp.zp / Cepheids_MW['pi'])
@@ -102,7 +109,11 @@ def fit_distance_ladder(DF_dict):
         if fp.fixed_Zw == False:
             q_string.append('Zw')
         if ((fp.include_MW == True) and (fp.fixed_zp == False)):
-            q_string.append('zp')
+            if fp.multiple_zp == True:
+                for i in range(len(list_MW)):
+                    q_string.append(f'zp{i+1}')
+            else:
+                q_string.append('zp')
 
         ### fill L
         # First create the matrix
@@ -184,9 +195,15 @@ def fit_distance_ladder(DF_dict):
                     index = q_string.index('Zw')
                     L[i + index_offset, index] = Cepheids_MW.loc[i, 'M/H']
                 #  zp
-                if fp.fixed_zp == False:
-                    index = q_string.index('zp')
-                    L[i + index_offset, index] = - 5 / np.log(10) / Cepheids_MW.loc[i, 'pi']
+                if (fp.fixed_zp == False):
+                    if (fp.multiple_zp == False):
+                        index = q_string.index('zp')
+                        L[i + index_offset, index] = - 5 / np.log(10) / Cepheids_MW.loc[i, 'pi']
+                    else:
+                        index = list_MW[list_MW == Cepheids_MW.loc[i, 'Gal']].index[0]
+                        index = q_string.index(f'zp{index+1}')
+                        L[i + index_offset, index] = - 5 / np.log(10) / Cepheids_MW.loc[i, 'pi']
+
         #  SNe from Cepheid-host galaxies
         index_offset += i + 1
         for i in range(len(SNe_Cepheids)):
@@ -386,7 +403,10 @@ def fit_distance_ladder(DF_dict):
         L = np.vstack([L, to_add])
 
     ### Find the optimal parameters :
-    C = np.diag(diag)
+    if len(cov_matrix) == 0:
+        C = np.diag(diag)
+    else:
+        C = cov_matrix
     LT = np.transpose(L)
     C1 = np.linalg.inv(C)
     Sigma2 = np.linalg.inv(np.matmul(np.matmul(LT, C1), L))
@@ -419,4 +439,4 @@ def fit_distance_ladder(DF_dict):
     # Add the chi2/dof
     q_dict['chi2/dof'] = [chi2_reduced, 0]
 
-    return y, q_dict, L
+    return y, q_dict, L, Sigma2

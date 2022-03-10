@@ -56,19 +56,25 @@ def plot_individual_PL(DF_dict, q_dict, DF_dict_outliers, work_dir='./'):
         if fp.outlier_rejection == True:
             ax[i][j].plot(logP_out-1, L_out, marker='.', ms=10, mfc="lime", mec="k", ls="", c="k", lw=0.6)
         # Plot model
-        if galaxy == 'MW':
+        if galaxy[:2] == 'MW':
             if fp.PLR_break == False:
-                bs, bh = b, b
-            ax[i][j].plot([x_lim[0], 0, x_lim[1]], [mW + bs * x_lim[0], mW, mW + bh * x_lim[1]], zorder=10)
+                bs, bl = b, b
+            else:
+                bs = q_dict['bs'][0]
+                bl = q_dict['bl'][0]
+            ax[i][j].plot([x_lim[0], 0, x_lim[1]], [mW + bs * x_lim[0], mW, mW + bl * x_lim[1]], zorder=10)
         else:
             if fp.PLR_break == False:
-                bs, bh = b, b
-            ax[i][j].plot([x_lim[0], 0, x_lim[1]], [mW + bs * x_lim[0], mW, mW + bh * x_lim[1]] + mu, zorder=10)
+                bs, bl = b, b
+            else:
+                bs = q_dict['bs'][0]
+                bl = q_dict['bl'][0]
+            ax[i][j].plot([x_lim[0], 0, x_lim[1]], [mW + bs * x_lim[0], mW, mW + bl * x_lim[1]] + mu, zorder=10)
         # Set scale and parameters
         ax[i][j].set_title(galaxy, fontsize=9, fontweight="bold")
         ax[i][j].set_xlabel('log(P)-1', fontsize=8)
         ax[i][j].xaxis.set_label_coords(.5, -.22)
-        if ((fp.include_MW == True) and (galaxy=='MW')):
+        if ((fp.include_MW == True) and (galaxy[:2] == 'MW')):
             ax[i][j].set_ylabel('$M_W$ corrected', fontsize=8)
         else:
             ax[i][j].set_ylabel('$m_W$ corrected', fontsize=8)
@@ -92,8 +98,12 @@ def plot_individual_PL(DF_dict, q_dict, DF_dict_outliers, work_dir='./'):
         return i,j
 
     ### Create the Nx5 grid of subplot
+    if fp.include_MW == True:
+        N_MW_dataset = len(DF_dict['Cepheids_MW']['Gal'].drop_duplicates().reset_index(drop=True))
+    else:
+        N_MW_dataset = 0
     N_lines_Cep = ceil(fp.N_galaxies_Cep/5)
-    N_lines_anc = ceil((fp.N_anchors_Cep + (fp.include_MW==True))/5)
+    N_lines_anc = ceil((fp.N_anchors_Cep + N_MW_dataset)/5)
     N = N_lines_Cep + N_lines_anc
     fig, ax = plt.subplots(nrows=N, ncols=5)
     fig.tight_layout()
@@ -114,7 +124,12 @@ def plot_individual_PL(DF_dict, q_dict, DF_dict_outliers, work_dir='./'):
         Zw = fp.Zw
     if fp.include_MW == True:
         if fp.fixed_zp == False:
-            zp = q_dict['zp'][0]
+            if fp.multiple_zp == True:
+                zp_list = []
+                for i in range(N_MW_dataset):
+                    zp_list.append(q_dict[f'zp{i+1}'][0])
+            else:
+                zp = q_dict['zp'][0]
         else:
             zp = fp.zp
 
@@ -169,24 +184,31 @@ def plot_individual_PL(DF_dict, q_dict, DF_dict_outliers, work_dir='./'):
     if fp.include_MW == True:
         # Load the Cepheids_MW DF
         Cepheids_MW = DF_dict['Cepheids_MW']
+        list_MW = Cepheids_MW['Gal'].drop_duplicates().reset_index(drop=True)
         if bool(DF_dict_outliers) == True:
             Cepheids_MW_out = DF_dict_outliers['Cepheids_MW']
         else:
             Cepheids_MW_out = pd.DataFrame(columns=Cepheids_MW.columns)  # Empty DF if no outliers
-        # Only 1 galaxy -> no iteration
-        galaxy = 'MW'
-        logP = Cepheids_MW['logP']
-        logP_out = Cepheids_MW_out['logP']
-        L = Cepheids_MW['mW'] - Zw * Cepheids_MW['M/H'] \
-            - 10 + 5 * np.log10(Cepheids_MW['pi']) \
-            + 5 * zp / np.log(10) / Cepheids_MW['pi']
-        L_out = Cepheids_MW_out['mW'] - Zw * Cepheids_MW_out['M/H'] \
-                - 10 + 5 * np.log10(Cepheids_MW_out['pi']) \
-                + 5 * zp / np.log(10) / Cepheids_MW_out['pi']
-        err = Cepheids_MW['sig_mW']
-        err_out = Cepheids_MW_out['sig_mW']
-        plot_ij()
-        i,j = incr_ij(i,j)
+        for galaxy in list_MW:
+            Filtered = Cepheids_MW[Cepheids_MW['Gal'] == galaxy]
+            Filtered_out = Cepheids_MW_out[Cepheids_MW_out['Gal'] == galaxy]
+            logP = Filtered['logP']
+            logP_out = Filtered_out['logP']
+            if fp.multiple_zp == True:
+                zp_index = list_MW[list_MW == galaxy].index[0]
+                zp_tmp = zp_list[zp_index]
+            else:
+                zp_tmp = zp
+            L = Filtered['mW'] - Zw * Filtered['M/H'] \
+                - 10 + 5 * np.log10(Filtered['pi']) \
+                + 5 * zp_tmp / np.log(10) / Filtered['pi']
+            L_out = Filtered_out['mW'] - Zw * Filtered_out['M/H'] \
+                    - 10 + 5 * np.log10(Filtered_out['pi']) \
+                    + 5 * zp_tmp / np.log(10) / Filtered_out['pi']
+            err = Filtered['sig_mW']
+            err_out = Filtered_out['sig_mW']
+            plot_ij()
+            i,j = incr_ij(i,j)
     # Remove empty subplots
     while j!=0:
         ax[i][j].remove()
@@ -230,7 +252,12 @@ def plot_global_PL(DF_dict, q_dict, DF_dict_outliers, work_dir='./'):
         Zw = fp.Zw
     if fp.include_MW == True:
         if fp.fixed_zp == False:
-            zp = q_dict['zp'][0]
+            if fp.multiple_zp == True:
+                zp_list = []
+                for i in range(len(DF_dict['Cepheids_MW']['Gal'].drop_duplicates().reset_index(drop=True))):
+                    zp_list.append(q_dict[f'zp{i + 1}'][0])
+            else:
+                zp = q_dict['zp'][0]
         else:
             zp = fp.zp
 
@@ -274,21 +301,29 @@ def plot_global_PL(DF_dict, q_dict, DF_dict_outliers, work_dir='./'):
     # Load the Cepheids_MW DF
     if fp.include_MW == True:
         Cepheids_MW = DF_dict['Cepheids_MW']
+        list_MW = Cepheids_MW['Gal'].drop_duplicates().reset_index(drop=True)
         if bool(DF_dict_outliers) == True:
             Cepheids_MW_out = DF_dict_outliers['Cepheids_MW']
         else:
             Cepheids_MW_out = pd.DataFrame(columns=Cepheids_MW.columns)  # Empty DF if no outliers
-        # No need to iterate
-        logP = np.append(logP, Cepheids_MW['logP'])
-        logP_out = np.append(logP_out, Cepheids_MW_out['logP'])
-        M = np.append(M, Cepheids_MW['mW'] - Zw * Cepheids_MW['M/H'] \
-                         - 10 + 5 * np.log10(Cepheids_MW['pi']) \
-                         + 5 * zp / np.log(10) / Cepheids_MW['pi'])
-        M_out = np.append(M_out, Cepheids_MW_out['mW'] - Zw * Cepheids_MW_out['M/H'] \
-                                 - 10 + 5 * np.log10(Cepheids_MW_out['pi']) \
-                                 + 5 * zp / np.log(10) / Cepheids_MW_out['pi'])
-        err = np.append(err, np.sqrt(Cepheids_MW['sig_mW'] ** 2 + Cepheids_MW['sig_pi'] ** 2))
-        err_out = np.append(err_out, np.sqrt(Cepheids_MW_out['sig_mW'] + Cepheids_MW_out['sig_pi'] ** 2))
+        for galaxy in list_MW:
+            Filtered = Cepheids_MW[Cepheids_MW['Gal'] == galaxy]
+            Filtered_out = Cepheids_MW_out[Cepheids_MW_out['Gal'] == galaxy]
+            logP = np.append(logP, Filtered['logP'])
+            logP_out = np.append(logP_out, Filtered_out['logP'])
+            if fp.multiple_zp == True:
+                zp_index = list_MW[list_MW == galaxy].index[0]
+                zp_tmp = zp_list[zp_index]
+            else:
+                zp_tmp = zp
+            M = np.append(M, Filtered['mW'] - Zw * Filtered['M/H'] \
+                         - 10 + 5 * np.log10(Filtered['pi']) \
+                         + 5 * zp_tmp / np.log(10) / Filtered['pi'])
+            M_out = np.append(M_out, Filtered_out['mW'] - Zw * Filtered_out['M/H'] \
+                                 - 10 + 5 * np.log10(Filtered_out['pi']) \
+                                 + 5 * zp_tmp / np.log(10) / Filtered_out['pi'])
+            err = np.append(err, np.sqrt(Filtered['sig_mW'] ** 2 + Filtered['sig_pi'] ** 2))
+            err_out = np.append(err_out, np.sqrt(Filtered_out['sig_mW'] + Filtered_out['sig_pi'] ** 2))
 
     ### Plot
     #  Create the figure
@@ -439,10 +474,4 @@ def plot_SNe(DF_dict, q_dict, DF_dict_outliers, work_dir='./'):
     # Save
     print('Saving the resdhift-magnitude plot...')
     plt.savefig(fig_dir + 'redshift_magnitude.png', bbox_inches='tight', dpi=200)
-    return
-
-
-
-
-
     return

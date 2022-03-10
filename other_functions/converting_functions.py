@@ -118,7 +118,7 @@ def Riess_to_data(Cepheids_R16, SNe_R16, Cepheids_LMC_R19, Cepheids_MW_R21,  dat
         return 0
     tmp = tmp[tmp['pi_EDR3'] != '⋯'].reset_index(drop=True) # Remove the Cepheids with no parallax
     Cepheids_MW = pd.DataFrame()
-    Cepheids_MW['Gal'] = ['MW'] * len(tmp)
+    Cepheids_MW['Gal'] = ['MW1'] * len(tmp)
     Cepheids_MW['logP'] = tmp['logP']
     Cepheids_MW['mW'] = tmp['m_W']
     Cepheids_MW['sig_mW'] = tmp['sig_m_W']

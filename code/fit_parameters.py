@@ -3,7 +3,8 @@ include_Cepheids = True
 N_galaxies_Cep = 19         # Number of SN-host galaxies
 N_anchors_Cep = 2           # Number of anchors
 include_MW = True           # Consider the MW-Cepheids and their parallax
-fixed_zp = False            # Force the parallax zero point to a given value and don't fit it
+multiple_zp = True          # Fits for different zp for different dataset.
+fixed_zp = False            # Force the parallax zero point to a given value and don't fit it (only 1 zp)
 zp = -0.014                 # zp in as. ONLY IF fixed_zp = True
 sig_zp = 0.005		        # zp uncertainty in as. ONLY IF fixed_zp = True
 fixed_Zw = False            # Force the metallicity slope Zw to a given value and don't fit for it

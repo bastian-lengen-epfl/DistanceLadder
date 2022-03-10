@@ -39,7 +39,7 @@ def single_kappa_clipping(DF_dict, SNe_other, kappa=2.7, work_dir='./'):
         DF_dict_outliers['SNe_Hubble'] = SNe_other
 
     ### First iteration
-    y, q_dict, L = fit_distance_ladder(DF_dict)
+    y, q_dict, L = fit_distance_ladder(DF_dict)[:3]
     q = np.array([]) # Load the q values
     for str in q_dict:
         if str not in ['H0', 'chi2/dof']:
@@ -95,7 +95,7 @@ def single_kappa_clipping(DF_dict, SNe_other, kappa=2.7, work_dir='./'):
                                     .drop(index=index).reset_index(drop=True)
 
         # Re-iterate
-        y, q_dict, L = fit_distance_ladder(DF_dict)
+        y, q_dict, L  = fit_distance_ladder(DF_dict)[:3]
         q = np.array([])  # Load the q values
         for str in q_dict:
             if str not in ['H0', 'chi2/dof']:
