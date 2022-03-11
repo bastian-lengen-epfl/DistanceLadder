@@ -3,7 +3,7 @@
 This folder contains all the scripts to process multivariate regression on the Cepheid- and/or TRGB-based distanced 
 ladder. The models used are initially based on Riess (2021b) but modified according to our needs.
 ## Fit setup and data pre-processing
-Two thing have to be done before fitting the distance ladder:
+Two things have to be done before fitting the distance ladder:
 * Modify the `fit_parameters.py` in order to choose what model you want to fit.
 * Include your data in the `/data_static` folder. According to your needs the following `.csv` have to be in this folder:
   * `/data_static/Cepheids.csv` containing the data from Cepheids in SN-host galaxies.
@@ -18,14 +18,14 @@ Two thing have to be done before fitting the distance ladder:
 ### Cepheids data 
 The `.csv` have to be in a specific form in order to run the code. The columns name are not revelant but their order is.
 
-For the `/data_static/Cepheids.csv`the columns have to be in that order:
+For the `/data_static/Cepheids.csv`the columns have to be in this order:
 1. Galaxy host
 2. Log10 of the pulsation period
 3. Wesenheit magnitude
 4. Uncertainty of the Wesenheit magnitude
 5. Metallicity [Fe/H] or [O/H] (it has to be consistent between all Cepheids)
 6. Redshift
-7. Color term V-I, only used for K-corrections. It can be a column full of `NaN` if you will not use the K-corrections
+7. Color term V-I, only used for K-corrections. It can be a column full of `NaN` if you don't use the K-corrections
 
 For the `/data_static/Cepheids_MW.csv`:
 1. Galaxy host. Here the name stands for the dataset used (`'MW1'` for dataset1, `'MW2'` for 2, ...).
@@ -34,7 +34,7 @@ For the `/data_static/Cepheids_MW.csv`:
 4. Uncertainty of the Wesenheit magnitude
 5. Metallicity [Fe/H] or [O/H] (it has to be consistent between all Cepheids)
 6. Redshift (Here `z=0`)
-7. Color term V-I, only used for K-corrections. It can be a column full of `NaN` if you will not use the K-corrections
+7. Color term V-I, only used for K-corrections. It can be a column full of `NaN` if you don't use the K-corrections
 8. Parallax
 9. Uncertainty of the parallax
 
