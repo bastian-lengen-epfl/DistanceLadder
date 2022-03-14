@@ -1,7 +1,7 @@
 # Manually ignore
 data_tmp/
 work_dir/
-figure/
+testing_notebook/
 
 
 # Byte-compiled / optimized / DLL files
