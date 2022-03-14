@@ -61,7 +61,7 @@ def Riess_to_data(Cepheids_R16, SNe_R16, Cepheids_LMC_R19, Cepheids_MW_R21,  dat
     Cepheids_LMC_R19 = data_static_dir + Cepheids_LMC_R19
     Cepheids_MW_R21  = data_static_dir + Cepheids_MW_R21
 
-    # Remove warning about upper and lower-case managment
+    # Remove warning about upper and lower-case management
     warnings.simplefilter('ignore', category=AstropyWarning)
 
     # Start with the R16 Cepheids
