@@ -87,7 +87,7 @@ If you want to generate these `.csv` from the pre-loaded data from `/data_static
 `/data_static/Anand/`, `/data_static/H1PStars/`, a script is available in the `/other_functions/` folder. 
 
 Run, from the `./` directory, the command:
-`python3 other_functions/setup.py RH [--dir 'path_to_data_static']` . 
+`python3 other_functions/setup.py RH [--dir 'path_to_data_static'] [--dirtmp 'path_to_data_tmp']` . 
 
 Or the command: `python3 setup.py RH `
 

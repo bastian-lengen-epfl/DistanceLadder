@@ -1,9 +1,7 @@
 # Manually ignore
+data_tmp/
 work_dir/
 figure/
-data_static/Cepheids*.csv
-data_static/TRGB*.csv
-data_static/SNe*.csv
 
 
 # Byte-compiled / optimized / DLL files

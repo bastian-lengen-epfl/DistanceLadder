@@ -27,7 +27,7 @@ def run(fit_name, work_dir):
         os.mkdir(work_dir)
 
     ### Load the data
-    DF_dict, SNe_other = load_data()
+    DF_dict, SNe_other = load_data(data_tmp='./data_tmp/')
 
     ### Relativistic corrections
     # Cepheids relativistic corrections
