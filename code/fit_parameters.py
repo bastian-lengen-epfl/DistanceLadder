@@ -13,36 +13,46 @@ sig_Zw = 0		            # Zw uncertainty in dex, ONLY IF fixed_Zw = True
 PLR_break = False           # Allow for a break in the PLR at P=10d
 break_P = 10                # Period of the PLR-break in days. Also define the pivot period.
 added_scatter = 0           # Add dispersion to the Cepheids (See Moertsell et al. 2021, [2021arXiv210511461M])
-RLB_correction = False      # Correct for the RLB (See Anderson 2019, [2019A&A...631A.165A])
-Kcorr_Cep = False           # Correct for the K-corrections (See Anderson 2022, [2022A&A...658A.148A])
 
 
 ### TRGB
 include_TRGB = False
 N_galaxies_TRGB = 12        # Number of SN-host galaxies
 N_anchors_TRGB = 1          # Number of anchors
-Kcorr_TRGB = False          # Correct for the K-corrections (See Anderson 2022, [2022A&A...658A.148A])
 use_color = True            # Consider the color term (V-I) for the TRGB (See Anand et al. 2021, [2021AJ....162...80A])
 mid_VI = 1.32               # Pivot color for the color term, usually the value from N4258
 
+
 ### Cepheids + TRGB (only if include_Ceph & include_TRGB = True)
 different_mu = False        # Allow a different distance for mu_Cep and mu_TRGB
+
 
 ### SNe
 fit_aB = True
 aB = 0.715840               # Value for the Hubble diagram's intercept ONLY IF fit_aB = False
 sig_aB = 0.001631           # Uncertainty on the intercept
-z_min = 0.023               # Min redshift to consider when fitting for a_B
-z_max = 0.150               # Max redshift to consider when fitting for a_B
+z_min = 0.023               # Min redshift to consider when fitting for aB
+z_max = 0.150               # Max redshift to consider when fitting for aB
+
 
 ### Outlier
-outlier_rejection = True    # Include kappa-clipping outlier rejection
+outlier_rejection = False   # Include kappa-clipping outlier rejection
 kappa = 2.7                 # Value for the kappa-clipping process
 
+
+### Relativistic corrections
+RLB_correction = False       # Correct for the RLB (See Anderson 2019, [2019A&A...631A.165A])
+Kcorr_Cep = True            # Correct for the K-corrections (See Anderson 2022, [2022A&A...658A.148A])
+EBV_Cep = 0.0              # E(B-V) term for the K-correction
+Kcorr_TRGB = False          # Correct for the K-corrections (See Anderson 2022, [2022A&A...658A.148A])
+
+
 ### Plot
-show_plots = True           # If you want to display the plot
+show_plots = False          # If you want to display the plot
+
 
 ### Physics constants
 c = 299792.458              # km/s
 q0 = -0.55
 j0 = 1
+R = 0.386

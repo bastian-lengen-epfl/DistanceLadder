@@ -4,14 +4,20 @@ that are used by the other functions.
 """
 import pandas as pd
 import fit_parameters as fp
+from astropy.io import fits
+from astropy.table import Table
+import warnings
+from astropy.utils.exceptions import AstropyWarning
 
-def load_data(data_tmp='./data_tmp/'):
+def load_data(data_tmp='./data_tmp/', data_static='./data_static/'):
     '''
     Loads and return DF_dict, a dictionary of pandas DataFrame of the different .csv. It also return the SNe that are
     out of the [z_min, z_max] interval in a SNe_other DataFrame
 
     :type   data_tmp: string
     :param  data_tmp: data_tmp directory, by default ./data_tmp/
+    :type   data_static: string
+    :param  data_static: data_static directory, by default ./data_static/
     '''
 
     # Create an empty dictionnary of dataset
@@ -54,4 +60,24 @@ def load_data(data_tmp='./data_tmp/'):
     else:
         SNe_other = None
 
-    return DF_dict, SNe_other
+    # Remove warning about upper and lower-case management
+    warnings.simplefilter('ignore', category=AstropyWarning)
+    # Loads the table for the K_corrections
+    if fp.Kcorr_Cep == True:
+        print('Loading the Cepheids K-correction table...')
+        with fits.open(data_static+'H1PStars/Anderson2022/tablea1.fits') as hdul:
+            table_Kcorr_Cep = Table(hdul[1].data).to_pandas()
+        table_Kcorr_Cep = table_Kcorr_Cep.sort_values(by=['Teff', 'logg', '[Fe/H]', 'z', 'E(B-V)'])\
+                                         .reset_index(drop=True)
+    else:
+        table_Kcorr_Cep = None
+    if fp.Kcorr_TRGB == True:
+        print('Loading the TRGB K-correction table...')
+        with fits.open(data_static+'H1PStars/Anderson2022/tablea3.fits') as hdul:
+            table_Kcorr_TRGB = Table(hdul[1].data).to_pandas()
+        table_Kcorr_TRGB = table_Kcorr_TRGB.sort_values(by=['Teff', 'logg', '[Fe/H]', 'z', 'E(B-V)'])\
+                                           .reset_index(drop=True)
+    else:
+        table_Kcorr_TRGB = None
+
+    return DF_dict, SNe_other, table_Kcorr_Cep, table_Kcorr_TRGB

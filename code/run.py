@@ -11,7 +11,7 @@ import shutil
 import pickle
 from fitting import fit_distance_ladder
 from load_data import load_data
-from relativistic_corrections import RLB_correction, K_corr_Cep, K_corr_TRGB
+from relativistic_corrections import RLB_correction, interpolated_K_corr_Cep, K_corr_TRGB
 from outliers_rejection import single_kappa_clipping
 from plots import plot_individual_PL, plot_global_PL, plot_SNe
 
@@ -27,21 +27,22 @@ def run(fit_name, work_dir):
         os.mkdir(work_dir)
 
     ### Load the data
-    DF_dict, SNe_other = load_data(data_tmp='./data_tmp/')
+    DF_dict, SNe_other, table_Kcorr_Cep, table_Kcorr_TRGB = load_data(data_tmp='./data_tmp/',
+                                                                      data_static='./data_static/')
 
     ### Relativistic corrections
     # Cepheids relativistic corrections
     if fp.include_Cepheids == True:
         if fp.RLB_correction == True:
             print('Correcting Cepheids for the RLB...')
-            DF_dict = RLB_correction(DF_dict)
+            RLB_correction(DF_dict)
         if fp.Kcorr_Cep == True:
-            print('K-correcting the Cepheids...')
-            DF_dict = K_corr_Cep(DF_dict)
+            print('Start of the K-correction for the Cepheids...')
+            interpolated_K_corr_Cep(DF_dict, table_Kcorr_Cep, EBV=fp.EBV_Cep)
     # TRGB relativistic corrections
     if fp.include_TRGB == True:
         if fp.Kcorr_TRGB == True:
-            print('K-correcting the TRGB...')
+            print('Start of the K-correction the TRGB...')
             DF_dict = K_corr_TRGB(DF_dict)
 
     ### Fitting
