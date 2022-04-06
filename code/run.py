@@ -1,6 +1,6 @@
 '''
-This script takes the pre-processed data from the ./data_static folder, fit them according to the fit_parameters.py file,
-print and save the result of the fit and draw a few plots.
+This script takes the pre-processed data from the ./data_tmp/ folder, fit them according to the fit_parameters.py file,
+print,  save the result of the fit and draw a few plots.
 '''
 import sys
 import os
@@ -11,7 +11,7 @@ import shutil
 import pickle
 from fitting import fit_distance_ladder
 from load_data import load_data
-from relativistic_corrections import RLB_correction, interpolated_K_corr_Cep, K_corr_TRGB
+from relativistic_corrections import RLB_correction, interpolated_K_corr_Cep,  interpolated_K_corr_TRGB
 from outliers_rejection import single_kappa_clipping
 from plots import plot_individual_PL, plot_global_PL, plot_SNe
 
@@ -43,7 +43,8 @@ def run(fit_name, work_dir):
     if fp.include_TRGB == True:
         if fp.Kcorr_TRGB == True:
             print('Start of the K-correction the TRGB...')
-            DF_dict = K_corr_TRGB(DF_dict)
+            interpolated_K_corr_TRGB(DF_dict, table_Kcorr_TRGB, fp.Teff_TRGB,
+                                     fp.logg_TRGB, fp.FeH_TRGB, fp.EBV_TRGB)
 
     ### Fitting
     # Outliers rejection (Cepheids and SNe only)
@@ -97,14 +98,12 @@ def run(fit_name, work_dir):
     if fp.show_plots == True:
         if fp.outlier_rejection == False:
             if fp.include_Cepheids == True:
-                pass
                 plot_individual_PL(DF_dict, q_dict, dict({}), work_dir=work_dir) # Empty dict for outliers
                 plot_global_PL(DF_dict, q_dict, dict({}), work_dir=work_dir)  # Empty dict for outliers
             if fp.fit_aB == True:
                 plot_SNe(DF_dict, q_dict, dict({}), work_dir=work_dir)
         else:
             if fp.include_Cepheids == True:
-                pass
                 plot_individual_PL(DF_dict, q_dict, DF_dict_outliers, work_dir=work_dir)
                 plot_global_PL(DF_dict, q_dict, DF_dict_outliers, work_dir=work_dir)
             if fp.fit_aB == True:
