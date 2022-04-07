@@ -27,8 +27,7 @@ def run(fit_name, work_dir):
         os.mkdir(work_dir)
 
     ### Load the data
-    DF_dict, SNe_other, table_Kcorr_Cep, table_Kcorr_TRGB = load_data(data_tmp='./data_tmp/',
-                                                                      data_static='./data_static/')
+    DF_dict, SNe_other, table_Kcorr = load_data(data_tmp='./data_tmp/', data_static='./data_static/')
 
     ### Relativistic corrections
     # Cepheids relativistic corrections
@@ -38,12 +37,12 @@ def run(fit_name, work_dir):
             RLB_correction(DF_dict)
         if fp.Kcorr_Cep == True:
             print('Start of the K-correction for the Cepheids...')
-            interpolated_K_corr_Cep(DF_dict, table_Kcorr_Cep, EBV=fp.EBV_Cep)
+            interpolated_K_corr_Cep(DF_dict, table_Kcorr, EBV=fp.EBV_Cep)
     # TRGB relativistic corrections
     if fp.include_TRGB == True:
         if fp.Kcorr_TRGB == True:
             print('Start of the K-correction the TRGB...')
-            interpolated_K_corr_TRGB(DF_dict, table_Kcorr_TRGB, fp.Teff_TRGB,
+            interpolated_K_corr_TRGB(DF_dict, table_Kcorr, fp.Teff_TRGB,
                                      fp.logg_TRGB, fp.FeH_TRGB, fp.EBV_TRGB)
 
     ### Fitting

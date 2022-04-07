@@ -24,7 +24,7 @@ def single_K_corr_run(fit_dir, **kwargs):
         os.mkdir(fit_dir)
 
     # Load the data
-    DF_dict, SNe_other, table_Kcorr_Cep, table_Kcorr_TRGB = load_data(data_tmp='./data_tmp/',
+    DF_dict, SNe_other, table_Kcorr = load_data(data_tmp='./data_tmp/',
                                                                       data_static='./data_static/')
     interpolated_fun_list = kwargs.get('interpolated_fun_list')
     interpolated_fun = kwargs.get('interpolated_fun')
@@ -37,13 +37,13 @@ def single_K_corr_run(fit_dir, **kwargs):
             RLB_correction(DF_dict)
         if fp.Kcorr_Cep == True:
             print('Start of the K-correction for the Cepheids...')
-            interpolated_fun_list = interpolated_K_corr_Cep(DF_dict, table_Kcorr_Cep, kwargs.get('EBV_Cep', fp.EBV_Cep),
+            interpolated_fun_list = interpolated_K_corr_Cep(DF_dict, table_Kcorr, kwargs.get('EBV_Cep', fp.EBV_Cep),
                                                             interpolated_fun_list)
     # TRGB relativistic corrections
     if fp.include_TRGB == True:
         if fp.Kcorr_TRGB == True:
             print('Start of the K-correction the TRGB...')
-            interpolated_fun = interpolated_K_corr_TRGB(DF_dict, table_Kcorr_TRGB,
+            interpolated_fun = interpolated_K_corr_TRGB(DF_dict, table_Kcorr,
                                                         kwargs.get('Teff_TRGB', fp.Teff_TRGB),
                                                         kwargs.get('logg_TRGB', fp.logg_TRGB),
                                                         kwargs.get('FeH_TRGB', fp.FeH_TRGB),

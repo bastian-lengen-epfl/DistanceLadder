@@ -136,9 +136,9 @@ def interpolated_K_corr_Cep(DF_dict, table1a, EBV, interpolated_fun_list=None):
             if z>0.03:
                 print(f'WARNING: z {z}>0.03 -> set to z=0.03 for the K-corrections at index {i}.')
                 z = 0.03
-            elif z<0.005:
-                print(f'Warning: z {z}<0.005 -> set to z=0.005 for the K-corrections at index {i}.')
-                z = 0.005
+            elif z<0:
+                print(f'WARNING: z {z}<0 -> set to z=0.000 for the K-corrections at index {i}.')
+                z = 0
             DF.loc[i, 'mW'] = DF.loc[i, 'mW'] - Kcorr(Teff, logg, FeH, z, EBV)
         return
 
@@ -152,10 +152,10 @@ def interpolated_K_corr_Cep(DF_dict, table1a, EBV, interpolated_fun_list=None):
         correct_DF(DF_dict['Cepheids_MW'])
     return [Kcorr_I, Kcorr_H, Kcorr_V]
 
-def interpolated_K_corr_TRGB(DF_dict, table3a, Teff, logg, FeH, EBV, interpolated_fun=None):
+def interpolated_K_corr_TRGB(DF_dict, table1a, Teff, logg, FeH, EBV, interpolated_fun=None):
     '''
     This functions use the multilinear interpolation from
-    the Table 3a from Anderson (2022) [2022A&A...658A.148A]. Each parameter has to be previously decided by hand in
+    the Table 1a from Anderson (2022) [2022A&A...658A.148A]. Each parameter has to be previously decided by hand in
     the fit_parameters.py except for the redshift z which is include for each galaxy in the DF_dict.
     Returns the interpolations function Kcorr_I that can be re-used.
     Note: The interpolation can either be ran in this function if interpolated_fun=None, or it can re-use
@@ -163,8 +163,8 @@ def interpolated_K_corr_TRGB(DF_dict, table3a, Teff, logg, FeH, EBV, interpolate
 
     :type   DF_dict: dictionary of pandas DataFrame
     :param  DF_dict: Dictionary that contains the DataFrame that will be fitted.
-    :type   table3a: dictionary of pandas DataFrame
-    :param  table3a: Dictionary that contains the DataFrame that will be fitted.
+    :type   table1a: dictionary of pandas DataFrame
+    :param  table1a: Dictionary that contains the DataFrame that will be fitted.
     :type   Teff: float
     :param  Teff: value of the effective temperature Teff that has to be considered in the interpolation
     :type   logg: float
@@ -179,7 +179,7 @@ def interpolated_K_corr_TRGB(DF_dict, table3a, Teff, logg, FeH, EBV, interpolate
     '''
     # Load the functions
     if interpolated_fun is None:
-        Kcorr_I, _, _ = interpolate_function(table3a, is_Cep=False)
+        Kcorr_I, _, _ = interpolate_function(table1a, is_Cep=False)
     else:
         Kcorr_I = interpolated_fun
 
@@ -191,10 +191,10 @@ def interpolated_K_corr_TRGB(DF_dict, table3a, Teff, logg, FeH, EBV, interpolate
             if z > 0.03:
                 print(f'WARNING: z {z}>0.03 -> set to z=0.03 for the K-corrections at index {i}.')
                 z = 0.03
-            elif z < 0.005:
-                print(f'Warning: z {z}<0.005 -> set to z=0.005 for the K-corrections at index {i}.')
-                z = 0.005
-            DF.loc[i, 'm'] = DF.loc[i, 'm'] + - Kcorr_I([Teff, logg, FeH, z, EBV])*1e-3  # Here Kcorr in mmag !!!!
+            elif z < 0:
+                print(f'WARNING: z {z}<0 -> set to z=0.000 for the K-corrections at index {i}.')
+                z = 0
+            DF.loc[i, 'm'] = DF.loc[i, 'm'] - Kcorr_I([Teff, logg, FeH, z, EBV]) # Here Kcorr in mmag !!!!
         return
 
     # Correct each DF

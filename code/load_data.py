@@ -4,10 +4,6 @@ that are used by the other functions.
 """
 import pandas as pd
 import fit_parameters as fp
-from astropy.io import fits
-from astropy.table import Table
-import warnings
-from astropy.utils.exceptions import AstropyWarning
 
 def load_data(data_tmp='./data_tmp/', data_static='./data_static/'):
     '''
@@ -60,24 +56,12 @@ def load_data(data_tmp='./data_tmp/', data_static='./data_static/'):
     else:
         SNe_other = None
 
-    # Remove warning about upper and lower-case management
-    warnings.simplefilter('ignore', category=AstropyWarning)
     # Loads the table for the K_corrections
-    if fp.Kcorr_Cep == True:
-        print('Loading the Cepheids K-correction table...')
-        with fits.open(data_static+'H1PStars/Anderson2022/tablea1.fits') as hdul:
-            table_Kcorr_Cep = Table(hdul[1].data).to_pandas()
-        table_Kcorr_Cep = table_Kcorr_Cep.sort_values(by=['Teff', 'logg', '[Fe/H]', 'z', 'E(B-V)'])\
-                                         .reset_index(drop=True)
+    if ((fp.Kcorr_Cep) == True or (fp.Kcorr_TRGB == True)):
+        print('Loading the K-correction table...')
+        table_Kcorr = pd.read_csv(data_static+'H1PStars/Anderson2022/tablea1.dat', delimiter=r"\s+")
+        table_Kcorr = table_Kcorr.sort_values(by=['Teff', 'logg', '[Fe/H]', 'z', 'E(B-V)']).reset_index(drop=True)
     else:
-        table_Kcorr_Cep = None
-    if fp.Kcorr_TRGB == True:
-        print('Loading the TRGB K-correction table...')
-        with fits.open(data_static+'H1PStars/Anderson2022/tablea3.fits') as hdul:
-            table_Kcorr_TRGB = Table(hdul[1].data).to_pandas()
-        table_Kcorr_TRGB = table_Kcorr_TRGB.sort_values(by=['Teff', 'logg', '[Fe/H]', 'z', 'E(B-V)'])\
-                                           .reset_index(drop=True)
-    else:
-        table_Kcorr_TRGB = None
+        table_Kcorr = None
 
-    return DF_dict, SNe_other, table_Kcorr_Cep, table_Kcorr_TRGB
+    return DF_dict, SNe_other, table_Kcorr

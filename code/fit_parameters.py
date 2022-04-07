@@ -68,9 +68,9 @@ R = 0.386
 # These parameters are only used for the multiple_run.py
 
 ### Relativistic correction
-multiple_Cep = False
+multiple_Cep = True
 EBV_Cep_multi = [0.0, 0.1, 0.2, 0.3, 0.4]    # E(B-V) term for the K-correction, within [0.0, 0.4].
-multiple_TRGB = True
+multiple_TRGB = False
 EBV_TRGB_multi = [0.0, 0.01, 0.02, 0.03, 0.04, 0.05]          # E(B-V) term for the K-correction, within [0.0, 0.05].
 Teff_TRGB_multi = [3800, 3900, 4000, 4100, 4200, 4300, 4400, 4500]        # Teff term for the K-correction, within [3800, 4500].
 
