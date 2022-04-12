@@ -16,7 +16,7 @@ added_scatter = 0           # Add dispersion to the Cepheids (See Moertsell et a
 
 
 ### TRGB ###
-include_TRGB = True
+include_TRGB = False
 N_galaxies_TRGB = 12        # Number of SN-host galaxies
 N_anchors_TRGB = 1          # Number of anchors
 use_color = True            # Consider the color term (V-I) for the TRGB (See Anand et al. 2021, [2021AJ....162...80A])
@@ -47,14 +47,13 @@ Kcorr_Cep = True            # Correct for the K-corrections (See Anderson 2022, 
 EBV_Cep = 0.0               # E(B-V) term for the K-correction, within [0.0, 0.4].
 Kcorr_TRGB = True           # Correct for the K-corrections (See Anderson 2022, [2022A&A...658A.148A])
 EBV_TRGB = 0.0              # E(B-V) term for the K-correction, within [0.0, 0.05].
-Teff_TRGB = 4200            # Teff term for the K-correction, within [3800, 4500].
+Teff_TRGB = 4200            # Teff term for the K-correction, within [3500, 6000].
 logg_TRGB = 0.5             # logg term for the K-correction, within [0, 0.5].
-FeH_TRGB = -1.8             # [Fe/H] term for the K-correction, within [-2., -1.5].
+FeH_TRGB = -1.75            # [Fe/H] term for the K-correction, within [-2., -1.5].
 
 
 ### Plot ###
 show_plots = False          # If you want to display the plot
-
 
 ### Physics constants
 c = 299792.458              # km/s
@@ -69,10 +68,10 @@ R = 0.386
 
 ### Relativistic correction
 multiple_Cep = True
-EBV_Cep_multi = [0.0, 0.1, 0.2, 0.3, 0.4]    # E(B-V) term for the K-correction, within [0.0, 0.4].
+EBV_Cep_multi = [0.0, 0.004, 0.01, 0.03, 0.05, 0.1, 0.3, 0.5]    # E(B-V) term for the K-correction, within [0.0, 0.4].
 multiple_TRGB = False
-EBV_TRGB_multi = [0.0, 0.01, 0.02, 0.03, 0.04, 0.05]          # E(B-V) term for the K-correction, within [0.0, 0.05].
-Teff_TRGB_multi = [3800, 3900, 4000, 4100, 4200, 4300, 4400, 4500]        # Teff term for the K-correction, within [3800, 4500].
+EBV_TRGB_multi = [0.0, 0.004, 0.01, 0.03, 0.05, 0.1, 0.3, 0.5]         # E(B-V) term for the K-correction, within [0.0, 0.05].
+Teff_TRGB_multi = [3500, 6000]        # Teff term for the K-correction, within [3800, 4500].
 
 
 

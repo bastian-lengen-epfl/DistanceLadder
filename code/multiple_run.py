@@ -24,10 +24,8 @@ def single_K_corr_run(fit_dir, **kwargs):
         os.mkdir(fit_dir)
 
     # Load the data
-    DF_dict, SNe_other, table_Kcorr = load_data(data_tmp='./data_tmp/',
-                                                                      data_static='./data_static/')
-    interpolated_fun_list = kwargs.get('interpolated_fun_list')
-    interpolated_fun = kwargs.get('interpolated_fun')
+    DF_dict, SNe_other, table_Kcorr = load_data(data_tmp='./data_tmp/', data_static='./data_static/')
+    interpolated_IHV = kwargs.get('interpolated_IHV')
 
     ### Relativistic corrections
     # Cepheids relativistic corrections
@@ -37,18 +35,19 @@ def single_K_corr_run(fit_dir, **kwargs):
             RLB_correction(DF_dict)
         if fp.Kcorr_Cep == True:
             print('Start of the K-correction for the Cepheids...')
-            interpolated_fun_list = interpolated_K_corr_Cep(DF_dict, table_Kcorr, kwargs.get('EBV_Cep', fp.EBV_Cep),
-                                                            interpolated_fun_list)
+            interpolated_IHV = interpolated_K_corr_Cep(DF_dict, table_Kcorr, kwargs.get('EBV_Cep', fp.EBV_Cep),
+                                                            interpolated_IHV)
+
     # TRGB relativistic corrections
     if fp.include_TRGB == True:
         if fp.Kcorr_TRGB == True:
             print('Start of the K-correction the TRGB...')
-            interpolated_fun = interpolated_K_corr_TRGB(DF_dict, table_Kcorr,
+            interpolated_IHV = interpolated_K_corr_TRGB(DF_dict, table_Kcorr,
                                                         kwargs.get('Teff_TRGB', fp.Teff_TRGB),
                                                         kwargs.get('logg_TRGB', fp.logg_TRGB),
                                                         kwargs.get('FeH_TRGB', fp.FeH_TRGB),
                                                         kwargs.get('EBV_TRGB', fp.EBV_TRGB),
-                                                        interpolated_fun)
+                                                        interpolated_IHV)
 
     ### Fitting
     # Outliers rejection (Cepheids and SNe only)
@@ -117,10 +116,10 @@ def single_K_corr_run(fit_dir, **kwargs):
     for str in q_dict:
         print(f'{str} : {q_dict[str]}')
 
-    return q_dict, interpolated_fun_list, interpolated_fun
+    return q_dict, interpolated_IHV
 
 def multiple_run(fit_name, work_dir):
-    ### Check for inconsiticency in fit_parameters
+    ### Check for inconsiticencies in fit_parameters
     if (fp.include_Cepheids == False) and (fp.multiple_Cep == True):
         print('ERROR: Cannot run multiple Cepheids with include_Cepheids=False.')
         return 1
@@ -149,18 +148,16 @@ def multiple_run(fit_name, work_dir):
         print(f'I will create the {work_dir} directory for you !')
         os.mkdir(work_dir)
 
-
-
     ### Multiple K-corr run
-    interpolated_fun_list, interpolated_fun = None, None
+    interpolated_IHV, interpolated_I = None, None
     if fp.multiple_Cep == True:
         q_summary = []
         for EBV in fp.EBV_Cep_multi:
             print(f'*'.center(80, '*'))
             print(f' EBV = {EBV} '.center(80, '*'))
             print(f'*'.center(80, '*'))
-            q_string, interpolated_fun_list, interpolated_fun = \
-                single_K_corr_run(work_dir+f'EBV_Cep={EBV}', EBV_Cep=EBV, interpolated_fun_list=interpolated_fun_list)
+            q_string, interpolated_IHV = \
+                single_K_corr_run(work_dir+f'EBV_Cep={EBV}', EBV_Cep=EBV, interpolated_IHV=interpolated_IHV)
             q_string['EBV_Cep'] = EBV
             q_summary.append(q_string)
     elif fp.multiple_TRGB == True:
@@ -170,9 +167,9 @@ def multiple_run(fit_name, work_dir):
                 print(f'*'.center(80, '*'))
                 print(f' Teff = {Teff}, EBV = {EBV} '.center(80, '*'))
                 print(f'*'.center(80, '*'))
-                q_string, interpolated_fun_list, interpolated_fun = \
+                q_string, interpolated_IHV = \
                     single_K_corr_run(work_dir+f'Teff_TRGB={Teff}_EBV_TRGB={EBV}', Teff_TRGB=Teff, EBV_TRGB=EBV,
-                                      logg_TRGB=fp.logg_TRGB, FeH_TRGB=fp.FeH_TRGB, interpolated_fun=interpolated_fun)
+                                      logg_TRGB=fp.logg_TRGB, FeH_TRGB=fp.FeH_TRGB, interpolated_IHV=interpolated_IHV)
                 q_string['Teff_TRGB'] = Teff
                 q_string['EBV_TRGB']  = EBV
                 q_string['logg_TRGB'] = fp.logg_TRGB
