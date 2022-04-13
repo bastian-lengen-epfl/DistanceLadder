@@ -1,18 +1,20 @@
-"""
-This module contains the functions that correct for different relativistic effect by following the methodology
-from Anderson (2019, 2022), [2019A&A...631A.165A] and [2022A&A...658A.148A].
-"""
+'''
+This module contains the functions that correct for different relativistic effects (RLB, K-corrections) by following
+the methodology from Anderson (2019, 2022), [2019A&A...631A.165A] and [2022A&A...658A.148A].
+'''
 import numpy as np
 import fit_parameters as fp
 from scipy.interpolate import RegularGridInterpolator
 
 def RLB_correction(DF_dict):
     '''
-    Return the corrected the DF_dict for the Redshift Leavitt Bias (RLB) following the methodology from
-    Anderson (2019) [2019A&A...631A.165A] for Cepheids
-
-    :type   DF_dict: dictionary of pandas DataFrame
-    :param  DF_dict: Dictionary that contains the DataFrame that will be fitted.
+    Correct the DataFrames for the Redshift Leavitt Bias (RLB) on Cepheids by following the methodology from 
+    Anderson (2019) [2019A&A...631A.165A].
+    
+    Parameters
+    ----------
+    DF_dict : dict of pandas DataFrame
+        Dictionary that contains the different pandas DataFrame that have to be corrected before the fit.
     '''
     Cepheids = DF_dict['Cepheids']
     Cepheids_anchors = DF_dict['Cepheids_anchors']
@@ -21,23 +23,35 @@ def RLB_correction(DF_dict):
     Cepheids_anchors['logP'] = Cepheids_anchors['logP'] - np.log10(1 + Cepheids_anchors['z'])
     return
 
-def interpolate_function(tablea, is_Cep):
+def interpolate_function(table, is_Cep):
     '''
-    Create multilinear interpolations of the dataframe given. The parameters of the functions given in return
-    are Teff, logg, [Fe/H], z and E(B-V). This function returns the K-corrections functions Kcorr_H, Kcorr_I, Kcorr_H
-    for the Cepheids and None, Kcorr_I, None forthe TRGB.
+    Create multilinear interpolations of Table A1 from Anderson (2022) [2022A&A...658A.148A]. These interpolations are
+    done for the filter I (F814W) for the TRGB and Cepheids, and the filters H (F160W) and V (F555W) for the Cepheids.
 
-    :type   tablea: pandas DataFrame
-    :param  tablea: Table 1a for Cepheids or 3a for TRGB from Anderson(2022) [2022A&A...658A.148A].
-    :type   is_Cep: bool
-    :param  is_Cep: True to find the K-corrections functions for Cepheids, False for TRGB.
+    Parameters
+    ----------
+    table : pandas DataFrame
+        Table A1 from Anderson (2022) [2022A&A...658A.148A].
+    is_Cep : bool
+        True for Cepheids K-corrections, False for TRGB K-corrections.
+
+    Returns
+    -------
+    interpolate_I : function
+        Function that returns the K-corrections in the I band for a set of parameters [Teff, logg, [Fe/H], z, E(B-V)].
+    interpolate_H : function
+        Function that returns the K-corrections in the H band for a set of parameters [Teff, logg, [Fe/H], z, E(B-V)].
+        Note that this returns None for TRGB.
+    interpolate_V : function
+        Function that returns the K-corrections in the V band for a set of parameters [Teff, logg, [Fe/H], z, E(B-V)].
+        Note that this returns None for TRGB.
     '''
     # Get the grid values
-    Teff_grid = tablea['Teff'].drop_duplicates().values
-    logg_grid = tablea['logg'].drop_duplicates().values
-    FeH_grid = tablea['[Fe/H]'].drop_duplicates().values
-    z_grid = tablea['z'].drop_duplicates().values
-    EBV_grid = tablea['E(B-V)'].drop_duplicates().values
+    Teff_grid = table['Teff'].drop_duplicates().values
+    logg_grid = table['logg'].drop_duplicates().values
+    FeH_grid = table['[Fe/H]'].drop_duplicates().values
+    z_grid = table['z'].drop_duplicates().values
+    EBV_grid = table['E(B-V)'].drop_duplicates().values
 
     # Create the numpy 5-dimensional array for the data (i.e. f(Teff, logg, FeH, z, EBV))
     I = np.zeros(shape=(len(Teff_grid), len(logg_grid), len(FeH_grid), len(z_grid),len(EBV_grid)))
@@ -45,19 +59,19 @@ def interpolate_function(tablea, is_Cep):
         H, V = I.copy(), I.copy() # Same shape
 
     # Fill the result 5D array
-    for i in tablea.index:
+    for i in table.index:
         # Index
-        a = np.where(Teff_grid == tablea.loc[i, 'Teff'])
-        b = np.where(logg_grid == tablea.loc[i, 'logg'])
-        c = np.where(FeH_grid == tablea.loc[i, '[Fe/H]'])
-        d = np.where(z_grid == tablea.loc[i, 'z'])
-        e = np.where(EBV_grid == tablea.loc[i, 'E(B-V)'])
+        a = np.where(Teff_grid == table.loc[i, 'Teff'])
+        b = np.where(logg_grid == table.loc[i, 'logg'])
+        c = np.where(FeH_grid == table.loc[i, '[Fe/H]'])
+        d = np.where(z_grid == table.loc[i, 'z'])
+        e = np.where(EBV_grid == table.loc[i, 'E(B-V)'])
 
         # What to interpolate
-        I[a, b, c, d, e] = tablea.loc[i, 'F814WK']
+        I[a, b, c, d, e] = table.loc[i, 'F814WK']
         if is_Cep == True:
-            H[a, b, c, d, e] = tablea.loc[i, 'F160WK']
-            V[a, b, c, d, e] = tablea.loc[i, 'F555WK']
+            H[a, b, c, d, e] = table.loc[i, 'F160WK']
+            V[a, b, c, d, e] = table.loc[i, 'F555WK']
 
     # Create the interpolation functions
     interpolate_I = RegularGridInterpolator((Teff_grid, logg_grid, FeH_grid, z_grid, EBV_grid), I)
@@ -68,31 +82,36 @@ def interpolate_function(tablea, is_Cep):
         interpolate_V = RegularGridInterpolator((Teff_grid, logg_grid, FeH_grid, z_grid, EBV_grid), V)
     return interpolate_I, interpolate_H, interpolate_V
 
-def interpolated_K_corr_Cep(DF_dict, table1a, EBV, interpolated_IHV=None):
-
+def interpolated_K_corr_Cep(DF_dict, table, EBV, interpolated_IHV=None):
     '''
-    This function uses the multilinear interpolation from
-    the Table 1a from Anderson (2022) [2022A&A...658A.148A]. Each parameter can be estimated from the DF_dict except
-    the excess color E(B-V) that has to be assumed. Teff and logg comes from the eq. (20, 21) from Anderson (2022),
-    the metallicity and the redshift from the DF_dict, and the E(B-V) has to be given to the function.
-    Returns the interpolations functions list [Kcorr_I, Kcorr_H, Kcorr_V] that can be re-used.
-    Note: The interpolation can either be runned in this function if interpolated_IHV=None, or it can re-use
-    previously computed interpolation functions if you give interpolated_IHV=[Kcorr_I, Kcorr_H, Kcorr_V] as an
-    input.
+    This function will apply the K-corrections on Cepheids by following the methodology and Table A1 from Anderson
+    (2022) [2022A&A...658A.148A]. It either uses the interpolation functions for the Table A1 if they already exist,
+    or either generates the interpolation functions.
+    The parameters [Fe/H], z are taken from the DataFrames. The parameters Teff and logg are computed from the
+    eq. (20, 21) from Anderson (2022). However, the color excess E(B-V) has to be decided beforehand, usually in
+    fit_parameters.py
 
-    :type   DF_dict: dictionary of pandas DataFrame
-    :param  DF_dict: Dictionary that contains the DataFrame that will be fitted.
-    :type   table1a: dictionary of pandas DataFrame
-    :param  table1a: Dictionary that contains the DataFrame that will be fitted.
-    :type   EBV: float
-    :param  EBV: value of the excess color E(B-V) that has to be considered in the interpolation
-    :type   interpolated_IHV: list of interpolation functions
-    :param  interpolated_IHV: Contains the list of the interpolation i for the K-corrections in the I, H, V bands
-                                   if None -> runs the interpolation
+
+    Parameters
+    ----------
+    DF_dict : dict of pandas DataFrame
+        Dictionary that contains the different pandas DataFrame that have to be corrected before the fit.
+    table : table : pandas DataFrame
+        Table A1 from Anderson (2022) [2022A&A...658A.148A].
+    EBV : float
+        Value of the color excess E(B-V) that will be considered for the interpolation.
+    interpolated_IHV : list of functions
+        Contains the list of the interpolation functions for the K-corrections in the I, H, V bands. Note that if the
+        value is set to None, it will do the interpolation.
+
+    Returns
+    -------
+    interpolated_IHV : list of functions
+        Contains the list of the interpolation functions for the K-corrections in the I, H, V bands.
     '''
     # Load the functions
     if interpolated_IHV==None:
-        interpolated_IHV = interpolate_function(table1a, is_Cep=True)
+        interpolated_IHV = interpolate_function(table, is_Cep=True)
     [Kcorr_I, Kcorr_H, Kcorr_V ] = interpolated_IHV
 
     # Useful functions
@@ -152,34 +171,44 @@ def interpolated_K_corr_Cep(DF_dict, table1a, EBV, interpolated_IHV=None):
         correct_DF(DF_dict['Cepheids_MW'])
     return interpolated_IHV
 
-def interpolated_K_corr_TRGB(DF_dict, table1a, Teff, logg, FeH, EBV, interpolated_IHV=None):
+def interpolated_K_corr_TRGB(DF_dict, table, Teff, logg, FeH, EBV, interpolated_IHV=None):
     '''
-    This functions use the multilinear interpolation from
-    the Table 1a from Anderson (2022) [2022A&A...658A.148A]. Each parameter has to be previously decided by hand in
-    the fit_parameters.py except for the redshift z which is include for each galaxy in the DF_dict.
-    Returns the interpolations function Kcorr_I that can be re-used.
-    Note: The interpolation can either be ran in this function if interpolated_IHV=None, or it can re-use
-    previously computed interpolation function if you give interpolated_IHV= [Kcorr_I,_,_] as an input.
+    This function will apply the K-corrections on TRGB by following the methodology and Table A1 from Anderson
+    (2022) [2022A&A...658A.148A]. It either uses the interpolation functions for the Table A1 if they already exist,
+    or either generates the interpolation functions.
+    The parameters z are taken from the DataFrames. However, the color excess Teff, logg, [Fe/H] and E(B-V)
+    have to be decided beforehand, usually in fit_parameters.py
 
-    :type   DF_dict: dictionary of pandas DataFrame
-    :param  DF_dict: Dictionary that contains the DataFrame that will be fitted.
-    :type   table1a: dictionary of pandas DataFrame
-    :param  table1a: Dictionary that contains the DataFrame that will be fitted.
-    :type   Teff: float
-    :param  Teff: value of the effective temperature Teff that has to be considered in the interpolation
-    :type   logg: float
-    :param  logg: value of the surface gravity logg that has to be considered in the interpolation
-    :type   FeH: float
-    :param  FeH: value of the metallicity [Fe/H] that has to be considered in the interpolation
-    :type   EBV: float
-    :param  EBV: value of the excess color E(B-V) that has to be considered in the interpolation
-    :type   interpolated_IHV: list of interpolation functions
-    :param  interpolated_IHV: Contains the interpolation function for the K-corrections in the I band
-                                    if None -> runs the interpolation
+
+    Parameters
+    ----------
+    DF_dict : dict of pandas DataFrame
+        Dictionary that contains the different pandas DataFrame that have to be corrected before the fit.
+    table : table : pandas DataFrame
+        Table A1 from Anderson (2022) [2022A&A...658A.148A].
+    Teff : float
+        Value of the effective temperature Teff that will be considered for the interpolation.
+    logg : float
+        Value of the surface gravity logg that will be considered for the interpolation.
+    FeH : float
+        Value of the metallicity [Fe/H] that will be considered for the interpolation.
+    EBV : float
+        Value of the color excess E(B-V) that will be considered for the interpolation.
+    interpolated_IHV : list of functions
+        Contains the list of the interpolation functions for the K-corrections in the I, H, V bands. Note that if the
+        value is set to None, it will do the interpolation. Also, the second and third element are not relevant for TRGB
+        and are likely to be None (interpolated_IHV = [fun_I, None, None]).
+
+    Returns
+    -------
+    interpolated_IHV : list of functions
+        Contains the list of the interpolation functions for the K-corrections in the I, H, V bands. Note that since
+        the H and V bands are not relevant for TRGB, the second and third element are not relevant for TRGB and are
+        None (interpolated_IHV = [fun_I, None, None]).
     '''
     # Load the functions
     if interpolated_IHV is None:
-        interpolated_IHV = interpolate_function(table1a, is_Cep=False)
+        interpolated_IHV = interpolate_function(table, is_Cep=False)
     Kcorr_I = interpolated_IHV[0]
 
     # Useful functions
@@ -194,7 +223,6 @@ def interpolated_K_corr_TRGB(DF_dict, table1a, Teff, logg, FeH, EBV, interpolate
                 print(f'WARNING: z {z}<0 -> set to z=0.000 for the K-corrections at index {i}.')
                 z = 0
             DF.loc[i, 'm'] = DF.loc[i, 'm'] - Kcorr_I([Teff, logg, FeH, z, EBV]) # Here Kcorr in mmag !!!!
-            print(f'Teff = {Teff}, logg = {logg}, FeH = {FeH}, z = {z}, EBV = {EBV}, Kcorr_I = {Kcorr_I([Teff, logg, FeH, z, EBV])}')
         return
 
     # Correct each DF
@@ -205,7 +233,7 @@ def interpolated_K_corr_TRGB(DF_dict, table1a, Teff, logg, FeH, EBV, interpolate
     return interpolated_IHV
 
 ### No longer used by the other funcitons, but still available if necessary
-def K_corr_Cep(DF_dict, filter='W'):
+def old_K_corr_Cep(DF_dict, filter='W'):
     '''
     Return the corrected the DF_dict for the Cepheids K-corrections following the methodology from Anderson (2021)
     [2022A&A...658A.148A]
@@ -290,7 +318,7 @@ def K_corr_Cep(DF_dict, filter='W'):
 
     return DF_dict
 
-def K_corr_TRGB(DF_dict, filter='I'):
+def old_K_corr_TRGB(DF_dict, filter='I'):
     '''
     Return the corrected the DF_dict for the TRGB K-corrections following the methodology from Anderson (2022)
     [2022A&A...658A.148A]

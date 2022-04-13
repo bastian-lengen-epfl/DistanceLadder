@@ -1,6 +1,6 @@
 '''
 This script takes the pre-processed data from the ./data_tmp/ folder, fit them according to the fit_parameters.py file,
-print,  save the result of the fit and draw a few plots.
+print and save the results of the fit and draw a few plots.
 '''
 import sys
 import os

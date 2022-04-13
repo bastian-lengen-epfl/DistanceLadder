@@ -2,21 +2,21 @@
 include_Cepheids = True
 N_galaxies_Cep = 19         # Number of SN-host galaxies
 N_anchors_Cep = 2           # Number of anchors
-include_MW = True           # Consider the MW-Cepheids and their parallax
-multiple_zp = True          # Fits for different zp for different dataset.
-fixed_zp = False            # Force the parallax zero point to a given value and don't fit it (only 1 zp)
+include_MW = True           # Include the MW-Cepheids and their parallax
+multiple_zp = True          # Fits for different zp for different datasets
+fixed_zp = False            # Force the parallax zero point to a given value and don't fit it (only  works with 1 zp)
 zp = -0.014                 # zp in as. ONLY IF fixed_zp = True
 sig_zp = 0.005		        # zp uncertainty in as. ONLY IF fixed_zp = True
 fixed_Zw = False            # Force the metallicity slope Zw to a given value and don't fit for it
 Zw = 0                      # Slope of the metallicity effect on the PLR in dex. ONLY IF fixed_Zw = True
 sig_Zw = 0		            # Zw uncertainty in dex, ONLY IF fixed_Zw = True
-PLR_break = False           # Allow for a break in the PLR at P=10d
-break_P = 10                # Period of the PLR-break in days. Also define the pivot period.
+PLR_break = False           # Include a break in the PLR at P=10d
+break_P = 10                # Period of the PLR-break in days. It also defines the pivot period.
 added_scatter = 0           # Add dispersion to the Cepheids (See Moertsell et al. 2021, [2021arXiv210511461M])
 
 
 ### TRGB ###
-include_TRGB = False
+include_TRGB = True
 N_galaxies_TRGB = 12        # Number of SN-host galaxies
 N_anchors_TRGB = 1          # Number of anchors
 use_color = True            # Consider the color term (V-I) for the TRGB (See Anand et al. 2021, [2021AJ....162...80A])
@@ -67,11 +67,11 @@ R = 0.386
 # These parameters are only used for the multiple_run.py
 
 ### Relativistic correction
-multiple_Cep = True
+multiple_Cep = False
 EBV_Cep_multi = [0.0, 0.004, 0.01, 0.03, 0.05, 0.1, 0.3, 0.5]    # E(B-V) term for the K-correction, within [0.0, 0.4].
-multiple_TRGB = False
-EBV_TRGB_multi = [0.0, 0.004, 0.01, 0.03, 0.05, 0.1, 0.3, 0.5]         # E(B-V) term for the K-correction, within [0.0, 0.05].
-Teff_TRGB_multi = [3500, 6000]        # Teff term for the K-correction, within [3800, 4500].
+multiple_TRGB = True
+EBV_TRGB_multi = [0.0, 0.005, 0.01, 0.03, 0.05, 0.1, 0.3, 0.5]         # E(B-V) term for the K-correction, within [0.0, 0.05].
+Teff_TRGB_multi = [3500, 4200, 6000]        # Teff term for the K-correction, within [3800, 6000].
 
 
 

@@ -1,6 +1,6 @@
-"""
+'''
 This module contains functions that display various plots.
-"""
+'''
 import os
 import numpy as np
 import pandas as pd
@@ -26,19 +26,22 @@ def change_plot_parameters():
 
 def plot_individual_PL(DF_dict, q_dict, DF_dict_outliers, work_dir='./'):
     '''
-    Display the PLR for each Cepheids-host galaxies. The relation in the plot is a 2D linear relation.
-    To do so, the Wesenheit magnitude is corrected for metallicity, and also for the zp offset for the
+    Display the PLR for each Cepheid-host galaxies. The relation in the plot is a 2D linear relation.
+    Therefore, the Wesenheit magnitude is corrected for metallicity, and for the zp offset for the
     MW Cepheids.
 
-    :type   DF_dict: dictionary of pandas DataFrame
-    :param  DF_dict: Dictionary that contains the DataFrame that was fitted.
-    :type   q_dict: dictionary
-    :param  q_dict: Dictionary that contains the parameters of the fits.
-    :type   DF_dict_outliers: dictionary of pandas DataFrame
-    :param  DF_dict_outliers: Dictionary that contains the DataFrame of the outliers. By default an empty dict.
-    :type   work_dir: string
-    :param  work_dir: working directory, by default ./
+    Parameters
+    ----------
+    DF_dict : dict of pandas DataFrame
+        Dictionary that contains the different pandas DataFrame that have been fitted.
+    q_dict : dict of numpy array
+        A dictionary that contains the fit parameters and their uncertainty.
+    DF_dict_outlier : dict of pandas DataFrame
+        Dictionary that contains the different pandas DataFrame that have not been fitted.
+    work_dir : str
+        working directory, by default ./
     '''
+
     ### Check and create the figure directory
     fig_dir = work_dir + 'figure/'
     if not os.path.exists(fig_dir):
@@ -221,17 +224,19 @@ def plot_individual_PL(DF_dict, q_dict, DF_dict_outliers, work_dir='./'):
 def plot_global_PL(DF_dict, q_dict, DF_dict_outliers, work_dir='./'):
     '''
     Display the global PLR (absolute magnitude) for each all the Cepheids. The relation in the plot is a
-    2D linear relation. To do so, the Wesenheit magnitude is corrected for metallicity, and also for the
+    2D linear relation. Therefore, the Wesenheit magnitude is corrected for metallicity, distance, and also for the
     zp offset for the MW Cepheids.
 
-    :type   DF_dict: dictionary of pandas DataFrame
-    :param  DF_dict: Dictionary that contains the DataFrame that was fitted.
-    :type   q_dict: dictionary
-    :param  q_dict: Dictionary that contains the parameters of the fits.
-    :type   DF_dict_outliers: dictionary of pandas DataFrame
-    :param  DF_dict_outliers: Dictionary that contains the DataFrame of the outliers. By default an empty dict.
-    :type   work_dir: string
-    :param  work_dir: working directory, by default ./
+    Parameters
+    ----------
+    DF_dict : dict of pandas DataFrame
+        Dictionary that contains the different pandas DataFrame that have been fitted.
+    q_dict : dict of numpy array
+        A dictionary that contains the fit parameters and their uncertainty.
+    DF_dict_outlier : dict of pandas DataFrame
+        Dictionary that contains the different pandas DataFrame that have not been fitted.
+    work_dir : str
+        working directory, by default ./
     '''
     ### Check and create the figure directory
     fig_dir = work_dir + 'figure/'
@@ -386,16 +391,18 @@ def plot_global_PL(DF_dict, q_dict, DF_dict_outliers, work_dir='./'):
 
 def plot_SNe(DF_dict, q_dict, DF_dict_outliers, work_dir='./'):
     '''
-    Display the global redshift-magnitude plot for the SNe_Hubble dataset.
+    Display the global redshift-magnitude plot for the SNe_Hubble DataFrame.
 
-    :type   DF_dict: dictionary of pandas DataFrame
-    :param  DF_dict: Dictionary that contains the DataFrame that was fitted.
-    :type   q_dict: dictionary
-    :param  q_dict: Dictionary that contains the parameters of the fits.
-    :type   DF_dict_outliers: dictionary of pandas DataFrame
-    :param  DF_dict_outliers: Dictionary that contains the DataFrame of the outliers. By default an empty dict.
-    :type   work_dir: string
-    :param  work_dir: working directory, by default ./
+    Parameters
+    ----------
+    DF_dict : dict of pandas DataFrame
+        Dictionary that contains the different pandas DataFrame that have been fitted.
+    q_dict : dict of numpy array
+        A dictionary that contains the fit parameters and their uncertainty.
+    DF_dict_outlier : dict of pandas DataFrame
+        Dictionary that contains the different pandas DataFrame that have not been fitted.
+    work_dir : str
+        working directory, by default ./
     '''
     ### Useful functions
     def logczexpansion(z):

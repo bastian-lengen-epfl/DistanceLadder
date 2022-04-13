@@ -1,6 +1,6 @@
-"""
-This module contains the outliers rejections process that will be called by run.py
-"""
+'''
+This module contains the outlier rejections process that will be called by the different scripts.
+'''
 import os
 import numpy as np
 import pandas as pd
@@ -10,23 +10,31 @@ from fitting import fit_distance_ladder
 
 def single_kappa_clipping(DF_dict, SNe_other, kappa=2.7, work_dir='./'):
     '''
-    Return both the DF_dict after the outlier rejection and the DF_dict_out, which will contain all the outliers,
-    by following the single kappa clipping algorithm. This algorithm consists of rejecting the worst point at
-    every iteration.
-    First the fit is done. If the worst point is further than kappa*std(errors) to the fit, it is rejected.
-    After 1 point is rejected, the procedure restart. The fit is done and the worst point is rejected at each iteration.
-    The process stop when no point is worse than kappa*std(errors).
-    Note that the algorithm only reject points from the Cepheids, Cepheids_anchors, Cepheids_MW or SNe Hubble
+    This function performs an outlier rejection by following the single-kappa clipping algorithm. It will split the
+    initial DataFrame into two different DataFrames. One will be fit, the other contains the outliers that won't be
+    fitted. Note that this function only reject points form the Cepheids, Cepheids_anchors, Cepheids_MW or
+    SNe Hubble DataFrames.
 
-    :type   DF_dict: dictionary of pandas DataFrame
-    :param  DF_dict: Dictionary that contains the DataFrame that will be fitted.
-    :type   SNe_other: pandas DataFrame
-    :param  SNe_other: The DataFrame that contains the SNe with z<z_min or z>z_max
-    :type   kappa: float
-    :param  kappa: The kappa parameters for which the algorithm has to stop.
-    :type   work_dir: string
-    :param  work_dir: working directory, by default ./
+    Parameters
+    ----------
+    DF_dict : dict of pandas DataFrame
+        Dictionary that contains the different pandas DataFrame that have to be fitted.
+    SNe_other : pandas DataFrame
+        DataFrame that contains the SNe that are outside the fitting range [z_min, z_max] for the Hubble diagram.
+    kappa : float
+        The kappa parameters for which the rejection process stops. By default kappa is 2.7.
+    work_dir : string
+        working directory, by default ./
+
+    Returns
+    -------
+    DF_dict : dict of pandas DataFrame
+        Dictionary that contains the different pandas DataFrame that will be fitted.
+    DF_dict_outlier : dict of pandas DataFrame
+        Dictionary that contains the different pandas DataFrame that will not be fitted.
     '''
+
+
 
     ### Create the DF_dict_outliers for the outliers and load the DF_dict
     DF_dict_outliers = dict()

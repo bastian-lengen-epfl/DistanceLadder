@@ -1,19 +1,35 @@
-"""
+'''
 This module contains a function that fits the distance ladder to the different dataframes given.
-"""
+'''
 import numpy as np
 import fit_parameters as fp
 
 
 def fit_distance_ladder(DF_dict, cov_matrix = np.array([])):
     '''
-    Return the raw results of the fit parameters.
+    This function return the raw restult from the distance ladder fit, with the parameters from the fit_parameters.py.
 
-    :type   DF_dict: dictionary of pandas DataFrame
-    :param  DF_dict: Dictionary that contains the DataFrame that will be fitted.
-    :type   cov_matrix: numpy matrix
-    :param  cov_matrix: Covariance matrix that will be used by the fit function. By default empty
+    Parameters
+    ----------
+    DF_dict : dict of pandas DataFrame
+        Dictionary that contains the different pandas DataFrame that have to be fitted.
+    cov_matrix : numpy matrix
+        Covariance matrix that will be used by the fit function. If empty, the function will build the covariance matrix
+        from the DF_dict (By default cov_matrix is empty).
+
+    Returns
+    -------
+    y : numpy array
+        Signal vector y from the model equation y = L*q that has been fitted by the function.
+    q_dict : dict of numpy array
+        A dictionary that contains the parameters result and their uncertainty for the vector q from the model equation
+        y = L*q that has been fitted by the function. A few other parameters (H0, chi2/2) are also in this dictionnary.
+    L : numpy matrix
+        Design matrix L from the model equation y = L*q that has been fitted by the function.
+    Sigma2 : numpy matrix
+        Covariance matrix resulting from the fit.
     '''
+
 
     ### Useful functions
     def logczexpansion(z):
@@ -94,7 +110,7 @@ def fit_distance_ladder(DF_dict, cov_matrix = np.array([])):
         err = SNe_Cepheids['sig_mB'] ** 2
         diag = np.append(diag, err)
 
-        ### Complete q_string for future dict so it's easier to access
+        ### Complete q_string for future dict
         for gal in galaxies_Cep:
             q_string.append(f'mu_{gal}')
         for gal in anchors_Cep:

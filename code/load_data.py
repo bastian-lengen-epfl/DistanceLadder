@@ -1,21 +1,32 @@
-"""
+'''
 This module contains a function that loads the previously pre-processed data and return the corresponding DataFrames
 that are used by the other functions.
-"""
+'''
 import pandas as pd
 import fit_parameters as fp
 
-def load_data(data_tmp='./data_tmp/', data_static='./data_static/'):
+def load_data(data_tmp='./data_tmp/', data_static='./data_static/') -> bool:
     '''
-    Loads and return DF_dict, a dictionary of pandas DataFrame of the different .csv. It also return the SNe that are
-    out of the [z_min, z_max] interval in a SNe_other DataFrame
+    Load the data from the data_tmp and data_static folders and put them in different DataFrames that will be later used by the other
+    functions.
 
-    :type   data_tmp: string
-    :param  data_tmp: data_tmp directory, by default ./data_tmp/
-    :type   data_static: string
-    :param  data_static: data_static directory, by default ./data_static/
+    Parameters
+    ----------
+    data_tmp : str
+        data_tmp directory, by default ./data_tmp/
+    data_static : str
+        data_static directory, by default ./data_static/
+
+    Returns
+    -------
+    DF_dict : dict of pandas DataFrame
+        Dictionary that contains the different pandas DataFrame that have to be fitted.
+    SNe_other : pandas DataFrame
+        DataFrame that contains the SNe that are outside the fitting range [z_min, z_max] for the Hubble diagram.
+    table_Kcorr : pandas DataFrame
+        DataFrame that contains Table 1a from Anderson (2022) [2022A&A...658A.148A] that will be used for the
+        K-corrections. Note that it can return None if the fit doesn't apply K-correction (see fit_parameters.py).
     '''
-
     # Create an empty dictionnary of dataset
     DF_dict=dict()
 

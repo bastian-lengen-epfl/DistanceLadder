@@ -1,6 +1,6 @@
 '''
-This script takes the pre-processed data from the ./data_tmp/ folder, fit them according to the fit_parameters.py file,
-print,  save the result of the fit and draw a few plots.
+This script runs multiple fits according to the parameters specified in the fit_parameters.py file. It aims to test
+different parametes for the K-corrections for both Cepheids and TRGB.
 '''
 import sys
 import os
