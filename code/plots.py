@@ -49,15 +49,22 @@ def plot_individual_PL(DF_dict, q_dict, DF_dict_outliers, work_dir='./'):
         os.mkdir(fig_dir)
 
     # Usefull function
-    def plot_ij():
+    def plot_ij(is_anchor):
         '''
         Plot the individual PL relation for each galaxy
+
+        Parameters
+        ----------
+        is_anchor : bool
+            True for anchor galaxy.
         '''
-        x_lim = [-0.5, 1.1]
+
+        x_lim = [0.5, 2.1]
         # Plot errorbars
-        ax[i][j].errorbar(logP-1, L, marker='.', ms=10, mfc="r", mec="k", ls="", c="k", lw=0.6)
+        marker = 'v' if is_anchor==True else 'o'
+        ax[i][j].errorbar(logP, L, marker=marker, ms=6, mfc="r", mec="k", ls="", c="k", lw=0.6)
         if fp.outlier_rejection == True:
-            ax[i][j].plot(logP_out-1, L_out, marker='.', ms=10, mfc="lime", mec="k", ls="", c="k", lw=0.6)
+            ax[i][j].plot(logP_out, L_out, marker=marker, ms=6, mfc="lime", mec="k", ls="", c="k", lw=0.6)
         # Plot model
         if galaxy[:2] == 'MW':
             if fp.PLR_break == False:
@@ -65,25 +72,34 @@ def plot_individual_PL(DF_dict, q_dict, DF_dict_outliers, work_dir='./'):
             else:
                 bs = q_dict['bs'][0]
                 bl = q_dict['bl'][0]
-            ax[i][j].plot([x_lim[0], 0, x_lim[1]], [mW + bs * x_lim[0], mW, mW + bl * x_lim[1]], zorder=10)
+            ax[i][j].plot([x_lim[0], np.log10(fp.break_P), x_lim[1]], mW +
+                          [bs * (x_lim[0]-np.log10(fp.break_P)), 0, bl * (x_lim[1]-np.log10(fp.break_P))], zorder=10)
         else:
             if fp.PLR_break == False:
                 bs, bl = b, b
             else:
                 bs = q_dict['bs'][0]
                 bl = q_dict['bl'][0]
-            ax[i][j].plot([x_lim[0], 0, x_lim[1]], [mW + bs * x_lim[0], mW, mW + bl * x_lim[1]] + mu, zorder=10)
+            ax[i][j].plot([x_lim[0], np.log10(fp.break_P), x_lim[1]], mW + mu +
+                          [bs*(x_lim[0]-np.log10(fp.break_P)), 0, bl*(x_lim[1]-np.log10(fp.break_P))], zorder=10)
+        if (is_anchor == False) and (fp.PLR_break2 == True):
+            bL = q_dict['bL'][0]
+            ax[i][j].plot([np.log10(fp.break_P2), x_lim[1]], mW + mu + bl * np.log10(fp.break_P2/fp.break_P) +
+                          [0, bL * (x_lim[1]-np.log10(fp.break_P2))], color='midnightblue', ls='--', zorder=11)
         # Set scale and parameters
         ax[i][j].set_title(galaxy, fontsize=9, fontweight="bold")
-        ax[i][j].set_xlabel('log(P)-1', fontsize=8)
+        ax[i][j].set_xlabel('log(P)', fontsize=8)
         ax[i][j].xaxis.set_label_coords(.5, -.22)
         if ((fp.include_MW == True) and (galaxy[:2] == 'MW')):
-            ax[i][j].set_ylabel('$M_W$ corrected', fontsize=8)
+            ax[i][j].set_ylabel('$M_W-Z_W$[Fe/H]', fontsize=8)
         else:
-            ax[i][j].set_ylabel('$m_W$ corrected', fontsize=8)
+            ax[i][j].set_ylabel('$m_W-Z_W$[Fe/H]', fontsize=8)
         ax[i][j].tick_params(axis='x', labelsize=8)
         y_lim = ax[i][j].get_ylim()
-        ax[i][j].plot(np.log10([fp.break_P, fp.break_P])-1, [y_lim[0], y_lim[1]], c='k', ls='--', lw=0.5) # break line
+        ax[i][j].plot(np.log10([fp.break_P, fp.break_P]), [y_lim[0], y_lim[1]], c='k', ls='--', lw=0.5) # break line
+        if (fp.PLR_break2 == True) and (is_anchor == False):
+            ax[i][j].plot(np.log10([fp.break_P2, fp.break_P2]), [y_lim[0], y_lim[1]], c='k', ls='--',
+                          lw=0.5)  # break line
         ax[i][j].set_xlim(x_lim)
         ax[i][j].set_ylim(y_lim)
         ax[i][j].invert_yaxis()
@@ -121,6 +137,8 @@ def plot_individual_PL(DF_dict, q_dict, DF_dict_outliers, work_dir='./'):
         bl = q_dict['bl'][0]
     else:
         b = q_dict['b'][0]
+    if fp.PLR_break2 == True:
+        bL = q_dict['bL']
     if fp.fixed_Zw == False:
         Zw = q_dict['Zw'][0]
     else:
@@ -151,12 +169,12 @@ def plot_individual_PL(DF_dict, q_dict, DF_dict_outliers, work_dir='./'):
         Filtered_out = Cepheids_out[Cepheids_out['Gal']==galaxy]
         logP = Filtered['logP']
         logP_out = Filtered_out['logP']
-        L = Filtered['mW'] - Zw * Filtered['M/H']
-        L_out = Filtered_out['mW'] - Zw * Filtered_out['M/H']
+        L = Filtered['mW'] - Zw * Filtered['M/H'] # Correct for metallicity
+        L_out = Filtered_out['mW'] - Zw * Filtered_out['M/H'] # Correct for metallicity
         err = Filtered['sig_mW']
         err_out = Filtered_out['sig_mW']
         mu = q_dict[f'mu_{galaxy}'][0]
-        plot_ij()
+        plot_ij(is_anchor=False)
         i,j = incr_ij(i,j)
         
     # Remove empty subplots
@@ -176,12 +194,12 @@ def plot_individual_PL(DF_dict, q_dict, DF_dict_outliers, work_dir='./'):
         Filtered_out = Cepheids_anchors_out[Cepheids_anchors_out['Gal'] == galaxy]
         logP = Filtered['logP']
         logP_out = Filtered_out['logP']
-        L = Filtered['mW'] - Zw * Filtered['M/H']
-        L_out = Filtered_out['mW'] - Zw * Filtered_out['M/H']
+        L = Filtered['mW'] - Zw * Filtered['M/H'] # Correct for metallicity
+        L_out = Filtered_out['mW'] - Zw * Filtered_out['M/H'] # Correct for metallicity
         err = Filtered['sig_mW']
         err_out = Filtered_out['sig_mW']
         mu = Cepheids_anchors[Cepheids_anchors['Gal'] == galaxy].iloc[0]['mu'] + q_dict[f'Dmu_{galaxy}'][0]
-        plot_ij()
+        plot_ij(is_anchor=True)
         i,j = incr_ij(i,j)
     # MW Cepheids
     if fp.include_MW == True:
@@ -204,13 +222,13 @@ def plot_individual_PL(DF_dict, q_dict, DF_dict_outliers, work_dir='./'):
                 zp_tmp = zp
             L = Filtered['mW'] - Zw * Filtered['M/H'] \
                 - 10 + 5 * np.log10(Filtered['pi']) \
-                + 5 * zp_tmp / np.log(10) / Filtered['pi']
+                + 5 * zp_tmp / np.log(10) / Filtered['pi'] # Correct for metallicity and zp and distance
             L_out = Filtered_out['mW'] - Zw * Filtered_out['M/H'] \
                     - 10 + 5 * np.log10(Filtered_out['pi']) \
-                    + 5 * zp_tmp / np.log(10) / Filtered_out['pi']
+                    + 5 * zp_tmp / np.log(10) / Filtered_out['pi'] # Correct for metallicity and zp and distance
             err = Filtered['sig_mW']
             err_out = Filtered_out['sig_mW']
-            plot_ij()
+            plot_ij(is_anchor=True)
             i,j = incr_ij(i,j)
     # Remove empty subplots
     while j!=0:
@@ -251,6 +269,8 @@ def plot_global_PL(DF_dict, q_dict, DF_dict_outliers, work_dir='./'):
         bl = q_dict['bl'][0]
     else:
         b = q_dict['b'][0]
+    if fp.PLR_break2 == True:
+        bL = q_dict['bL'][0]
     if fp.fixed_Zw == False:
         Zw = q_dict['Zw'][0]
     else:
@@ -267,7 +287,7 @@ def plot_global_PL(DF_dict, q_dict, DF_dict_outliers, work_dir='./'):
             zp = fp.zp
 
     ### need to shift from mW to absolute magnitude MW for each galaxy
-    [logP, logP_out, M, M_out, err, err_out] = 6*[[]]
+    [logP, logP_out, M, M_out, err, err_out, anchor_flag, anchor_flag_out] = 8*[[]]
     # Load the Cepheids DF
     Cepheids = DF_dict['Cepheids']
     if bool(DF_dict_outliers) == True:
@@ -286,6 +306,8 @@ def plot_global_PL(DF_dict, q_dict, DF_dict_outliers, work_dir='./'):
         M_out = np.append(M_out, Filtered_out['mW'] - Zw * Filtered_out['M/H'] - mu)
         err = np.append(err,np.sqrt(Filtered['sig_mW']**2 + dmu**2))
         err_out = np.append(err_out,np.sqrt(Filtered_out['sig_mW']+dmu**2))
+        anchor_flag = np.append(anchor_flag, np.zeros(len(Filtered)))
+        anchor_flag_out = np.append(anchor_flag_out, np.zeros(len(Filtered_out)))
     # Load the Cepheids_anchors DF
     Cepheids_anchors = DF_dict['Cepheids_anchors']
     if bool(DF_dict_outliers) == True:
@@ -303,6 +325,8 @@ def plot_global_PL(DF_dict, q_dict, DF_dict_outliers, work_dir='./'):
         M_out = np.append(M_out, Filtered_out['mW'] - Zw * Filtered_out['M/H'] - Filtered_out['mu'])
         err = np.append(err, np.sqrt(Filtered['sig_mW'] ** 2 + Filtered['sig_mu'] ** 2))
         err_out = np.append(err_out, np.sqrt(Filtered_out['sig_mW'] + Filtered_out['sig_mu'] ** 2))
+        anchor_flag = np.append(anchor_flag, np.ones(len(Filtered)))
+        anchor_flag_out = np.append(anchor_flag_out, np.ones(len(Filtered_out)))
     # Load the Cepheids_MW DF
     if fp.include_MW == True:
         Cepheids_MW = DF_dict['Cepheids_MW']
@@ -329,6 +353,8 @@ def plot_global_PL(DF_dict, q_dict, DF_dict_outliers, work_dir='./'):
                                  + 5 * zp_tmp / np.log(10) / Filtered_out['pi'])
             err = np.append(err, np.sqrt(Filtered['sig_mW'] ** 2 + Filtered['sig_pi'] ** 2))
             err_out = np.append(err_out, np.sqrt(Filtered_out['sig_mW'] + Filtered_out['sig_pi'] ** 2))
+            anchor_flag = np.append(anchor_flag, np.ones(len(Filtered)))
+            anchor_flag_out = np.append(anchor_flag_out, np.ones(len(Filtered_out)))
 
     ### Plot
     #  Create the figure
@@ -338,14 +364,24 @@ def plot_global_PL(DF_dict, q_dict, DF_dict_outliers, work_dir='./'):
 
     # Top panel
     ax[0].set_title('Global PL relation for the absolute magnitude', fontsize=16)
-    ax[0].plot(logP-1, M, marker='.', ms=12, mfc="r", mec="k", ls="", c="k", lw=3)
-    ax[0].plot(logP_out-1, M_out, marker='.', ms=12, mfc="lime", mec="k", ls="", c="k", lw=3)
+    ax[0].plot(logP[anchor_flag==0], M[anchor_flag==0], marker='o', ms=6, mfc="r", mec="k", ls="", c="k", lw=3)
+    ax[0].plot(logP[anchor_flag==1], M[anchor_flag==1], marker='v', ms=6, mfc="r", mec="k", ls="", c="k", lw=3)
+    ax[0].plot(logP_out[anchor_flag_out==0], M_out[anchor_flag_out==0], marker='o', ms=6, mfc="lime", mec="k",
+                   ls="", c="k", lw=3)
+    ax[0].plot(logP_out[anchor_flag_out==1], M_out[anchor_flag_out==1], marker='v', ms=6, mfc="lime", mec="k",
+                   ls="", c="k", lw=3)
+    ax[0].legend(['SN-hosts', 'Anchors', 'SN-hosts + outlier', 'Anchors + outlier'])
     xmin, xmax = ax[0].get_xlim()
     ymin, ymax = ax[0].get_ylim()
     if fp.PLR_break == False:
         bs, bl = b, b
-    ax[0].plot([xmin, 0, xmax], [mW + bs * xmin, mW, mW + bl * xmax], c='tab:blue', ls='-', lw=3)
-    ax[0].plot([0, 0], [ymin, ymax], c='k', ls='--', lw=1.5)
+    ax[0].plot([xmin, np.log10(fp.break_P), xmax], mW +
+               [bs * (xmin-np.log10(fp.break_P)), 0, bl * (xmax-np.log10(fp.break_P))], c='tab:blue', ls='-', lw=3)
+    if fp.PLR_break2 == True:
+        ax[0].plot([np.log10(fp.break_P2), xmax], mW + bl*np.log10(fp.break_P2/fp.break_P)+
+                   [0, bL*(xmax-np.log10(fp.break_P2))], c='midnightblue', ls='--', lw=3)
+        ax[0].plot(2 * [np.log10(fp.break_P2)], [ymin, ymax], c='k', ls='--', lw=1.5)
+    ax[0].plot(2*[np.log10(fp.break_P)], [ymin, ymax], c='k', ls='--', lw=1.5)
     ax[0].set_xlim([xmin, xmax])
     ax[0].set_ylim([ymin, ymax])
     ax[0].invert_yaxis()
@@ -355,33 +391,43 @@ def plot_global_PL(DF_dict, q_dict, DF_dict_outliers, work_dir='./'):
         bottom=False,  # ticks along the bottom edge are off
         top=False,  # ticks along the top edge are off
         labelbottom=False)  # labels along the bottom edge are off
-    ax[0].set_ylabel('M$_W$ corrected [mag]', fontsize=14)
+    ax[0].set_ylabel('$M_W-Z_W$[Fe/H] [mag]', fontsize=14)
 
     # Bottom panel
     error = np.zeros(len(logP))
     for i in range(0, np.size(logP)):
-        if logP[i] < 0:
-            error[i] = M[i] - mW - bs * (logP[i]-1)
+        if logP[i] < np.log10(fp.break_P):
+            error[i] = M[i] - mW - bs * (logP[i]-np.log10(fp.break_P))
         else:
-            error[i] = M[i] - mW - bl * (logP[i]-1)
+            if fp.PLR_break2 == True:
+                error[i] = M[i] - mW - bl * (np.log10(fp.break_P2/fp.break_P)) - bL*(logP[i] - np.log10(fp.break_P2))
+            else:
+                error[i] = M[i] - mW - bl * (logP[i] - np.log10(fp.break_P))
     error_out = np.zeros(len(logP_out))
     for i in range(0, len(logP_out)):
         if logP_out[i] < 0:
-            error_out[i] = M_out[i] - mW - bs * (logP_out[i]-1)
+            error_out[i] = M_out[i] - mW - bs * (logP_out[i]-np.log10(fp.break_P))
         else:
-            error_out[i] = M_out[i] - mW - bl * (logP_out[i]-1)
+            if fp.PLR_break2 == True:
+                error_out[i] = M_out[i] - mW - bl * (np.log10(fp.break_P2 / fp.break_P)) - bL * (
+                               logP_out[i] - np.log10(fp.break_P2))
+            else:
+                error_out[i] = M_out[i] - mW - bl * (logP_out[i] - np.log10(fp.break_P))
 
-    ax[1].plot(logP-1, error, marker='D', ms=5, mfc="none", mec="firebrick", ls="", c="k", lw=0)
-    ax[1].plot(logP_out-1, error_out, marker='D', ms=5, mfc="none", mec="lime", ls="", c="k", lw=0)
+    ax[1].plot(logP[anchor_flag==0], error[anchor_flag==0], marker='o', ms=6, mfc="none", mec="firebrick", ls="", c="k", lw=0)
+    ax[1].plot(logP[anchor_flag==1], error[anchor_flag==1], marker='v', ms=6, mfc="none", mec="firebrick", ls="", c="k", lw=0)
+    ax[1].plot(logP_out[anchor_flag_out==0], error_out[anchor_flag_out==0], marker='o', ms=6, mfc="none", mec="lime", ls="", c="k", lw=0)
+    ax[1].plot(logP_out[anchor_flag_out==1], error_out[anchor_flag_out==1], marker='v', ms=6, mfc="none", mec="lime", ls="", c="k", lw=0)
     ymin, ymax = ax[1].get_ylim()
+    ax[1].legend(['SN-hosts', 'Anchors', 'SN-hosts + outlier', 'Anchors + outlier'])
     ax[1].plot([xmin, xmax], [0, 0], c='k', ls='--', lw=1.5)
     ax[1].plot([0, 0], [ymin, ymax], c='k', ls='--', lw=1.5)
     ax[1].set_xlim([xmin, xmax])
     ax[1].set_ylim([ymin, ymax])
     ax[1].invert_yaxis()
     ax2 = ax[1].twiny()  # ax1 and ax2 share y-axis
-    ax2.plot(logP-1, error, '.', markersize=0)
-    ax[1].set_xlabel('logP-1', fontsize=14)
+    ax2.plot(logP, error, '.', markersize=0)
+    ax[1].set_xlabel('logP', fontsize=14)
     ax[1].set_ylabel('$\Delta$M$_W$ [mag]', fontsize=14)
 
     # Save

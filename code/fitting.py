@@ -122,6 +122,8 @@ def fit_distance_ladder(DF_dict, cov_matrix = np.array([])):
             q_string.append('bl')
         else:
             q_string.append('b')
+        if fp.PLR_break2 == True:
+            q_string.append('bL')
         if fp.fixed_Zw == False:
             q_string.append('Zw')
         if ((fp.include_MW == True) and (fp.fixed_zp == False)):
@@ -153,7 +155,13 @@ def fit_distance_ladder(DF_dict, cov_matrix = np.array([])):
                     index = q_string.index('bs')
                 else:
                     index = q_string.index('bl')
-            L[i + index_offset, index] = Cepheids.loc[i, 'logP']-np.log10(fp.break_P)
+            threshold2 = np.log10(fp.break_P2)
+            if (fp.PLR_break2 == True) and (Cepheids.loc[i, 'logP'] >= threshold2):
+                L[i + index_offset, index] = np.log10(fp.break_P2) - np.log10(fp.break_P)  # For the P1 -> P2 offset
+                index = q_string.index('bL')
+                L[i + index_offset, index] = Cepheids.loc[i, 'logP'] - np.log10(fp.break_P2)
+            else:
+                L[i + index_offset, index] = Cepheids.loc[i, 'logP']-np.log10(fp.break_P)
             #  Zw
             if fp.fixed_Zw == False:
                 index = q_string.index('Zw')
