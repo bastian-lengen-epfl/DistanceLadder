@@ -5,7 +5,7 @@ import numpy as np
 import fit_parameters as fp
 
 
-def fit_distance_ladder(DF_dict, cov_matrix = np.array([])):
+def fit_distance_ladder(DF_dict, cov_matrix = np.array([]), **kwargs):
     '''
     This function return the raw restult from the distance ladder fit, with the parameters from the fit_parameters.py.
 
@@ -29,7 +29,8 @@ def fit_distance_ladder(DF_dict, cov_matrix = np.array([])):
     Sigma2 : numpy matrix
         Covariance matrix resulting from the fit.
     '''
-
+    ### Use of kwargs for the multiple_run.py
+    break_P2 = kwargs.get('break_P2', fp.break_P2)
 
     ### Useful functions
     def logczexpansion(z):
@@ -155,11 +156,11 @@ def fit_distance_ladder(DF_dict, cov_matrix = np.array([])):
                     index = q_string.index('bs')
                 else:
                     index = q_string.index('bl')
-            threshold2 = np.log10(fp.break_P2)
+            threshold2 = np.log10(break_P2)
             if (fp.PLR_break2 == True) and (Cepheids.loc[i, 'logP'] >= threshold2):
-                L[i + index_offset, index] = np.log10(fp.break_P2) - np.log10(fp.break_P)  # For the P1 -> P2 offset
+                L[i + index_offset, index] = np.log10(break_P2) - np.log10(fp.break_P)  # For the P1 -> P2 offset
                 index = q_string.index('bL')
-                L[i + index_offset, index] = Cepheids.loc[i, 'logP'] - np.log10(fp.break_P2)
+                L[i + index_offset, index] = Cepheids.loc[i, 'logP'] - np.log10(break_P2)
             else:
                 L[i + index_offset, index] = Cepheids.loc[i, 'logP']-np.log10(fp.break_P)
             #  Zw

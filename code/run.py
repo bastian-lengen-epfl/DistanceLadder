@@ -52,7 +52,7 @@ def run(fit_name, work_dir):
             print('Running the outlier rejection...')
             if fp.fit_aB == False:
                 SNe_other = pd.DataFrame() # Emtpy SNe_other if no SNe
-            DF_dict, DF_dict_outliers = single_kappa_clipping(DF_dict, SNe_other, kappa=2.7, work_dir=work_dir)
+            DF_dict, DF_dict_outliers = single_kappa_clipping(DF_dict, SNe_other, kappa=fp.kappa, work_dir=work_dir)
     # Fit
     print('Computing H0...')
     y, q_dict, L, Sigma2 = fit_distance_ladder(DF_dict)

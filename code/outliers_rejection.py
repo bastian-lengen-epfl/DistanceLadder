@@ -8,7 +8,7 @@ import fit_parameters as fp
 from fitting import fit_distance_ladder
 
 
-def single_kappa_clipping(DF_dict, SNe_other, kappa=2.7, work_dir='./'):
+def single_kappa_clipping(DF_dict, SNe_other, kappa=2.7, work_dir='./', **kwargs):
     '''
     This function performs an outlier rejection by following the single-kappa clipping algorithm. It will split the
     initial DataFrame into two different DataFrames. One will be fit, the other contains the outliers that won't be
@@ -33,7 +33,8 @@ def single_kappa_clipping(DF_dict, SNe_other, kappa=2.7, work_dir='./'):
     DF_dict_outlier : dict of pandas DataFrame
         Dictionary that contains the different pandas DataFrame that will not be fitted.
     '''
-
+    ### Use of kwargs for the multiple_run.py
+    break_P2 = kwargs.get('break_P2', fp.break_P2)
 
 
     ### Create the DF_dict_outliers for the outliers and load the DF_dict
@@ -47,7 +48,7 @@ def single_kappa_clipping(DF_dict, SNe_other, kappa=2.7, work_dir='./'):
         DF_dict_outliers['SNe_Hubble'] = SNe_other
 
     ### First iteration
-    y, q_dict, L = fit_distance_ladder(DF_dict)[:3]
+    y, q_dict, L = fit_distance_ladder(DF_dict, break_P2=break_P2)[:3]
     q = np.array([]) # Load the q values
     for str in q_dict:
         if str not in ['H0', 'chi2/dof']:
@@ -103,7 +104,7 @@ def single_kappa_clipping(DF_dict, SNe_other, kappa=2.7, work_dir='./'):
                                     .drop(index=index).reset_index(drop=True)
 
         # Re-iterate
-        y, q_dict, L  = fit_distance_ladder(DF_dict)[:3]
+        y, q_dict, L  = fit_distance_ladder(DF_dict, break_P2=break_P2)[:3]
         q = np.array([])  # Load the q values
         for str in q_dict:
             if str not in ['H0', 'chi2/dof']:

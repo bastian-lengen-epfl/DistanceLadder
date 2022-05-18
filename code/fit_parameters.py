@@ -12,7 +12,7 @@ Zw = 0                      # Slope of the metallicity effect on the PLR in dex.
 sig_Zw = 0		            # Zw uncertainty in dex, ONLY IF fixed_Zw = True
 PLR_break = True            # Include a break in the PLR at P = break_P
 break_P = 10                # Period of the PLR-break in days. It also defines the pivot period.
-PLR_break2 = True           # Include a second break in the PLR at P = break_P2 for SN-host galaxies
+PLR_break2 = False          # Include a second break in the PLR at P = break_P2 for SN-host galaxies
 break_P2 = 35               # Period of the second PLR-break in days
 added_scatter = 0           # Add dispersion to the Cepheids (See Moertsell et al. 2021, [2021arXiv210511461M])
 
@@ -45,9 +45,9 @@ kappa = 2.7                 # Value for the kappa-clipping process
 
 ### Relativistic corrections ###
 RLB_correction = True       # Correct for the RLB (See Anderson 2019, [2019A&A...631A.165A])
-Kcorr_Cep = True            # Correct for the K-corrections (See Anderson 2022, [2022A&A...658A.148A])
+Kcorr_Cep = False           # Correct for the K-corrections (See Anderson 2022, [2022A&A...658A.148A])
 EBV_Cep = 0.0               # E(B-V) term for the K-correction, within [0.0, 0.4].
-Kcorr_TRGB = True           # Correct for the K-corrections (See Anderson 2022, [2022A&A...658A.148A])
+Kcorr_TRGB = False          # Correct for the K-corrections (See Anderson 2022, [2022A&A...658A.148A])
 EBV_TRGB = 0.0              # E(B-V) term for the K-correction, within [0.0, 0.05].
 Teff_TRGB = 4200            # Teff term for the K-correction, within [3500, 6000].
 logg_TRGB = 0.5             # logg term for the K-correction, within [0, 0.5].
@@ -55,7 +55,7 @@ FeH_TRGB = -1.75            # [Fe/H] term for the K-correction, within [-2., -1.
 
 
 ### Plot ###
-show_plots = True          # If you want to display the plot
+show_plots = False          # If you want to display the plot
 
 ### Physics constants
 c = 299792.458              # km/s
@@ -70,10 +70,16 @@ R = 0.386
 
 ### Relativistic correction
 multiple_Cep = False
-EBV_Cep_multi = [0.0, 0.004, 0.01, 0.03, 0.05, 0.1, 0.3, 0.5]    # E(B-V) term for the K-correction, within [0.0, 0.4].
-multiple_TRGB = True
-EBV_TRGB_multi = [0.0, 0.005, 0.01, 0.03, 0.05, 0.1, 0.3, 0.5]         # E(B-V) term for the K-correction, within [0.0, 0.05].
-Teff_TRGB_multi = [3500, 4200, 6000]        # Teff term for the K-correction, within [3800, 6000].
+EBV_Cep_multi = [0.0, 0.005, 0.01, 0.015, 0.02, 0.025, 0.03, 0.035, 0.04, 0.045, 0.05]         # E(B-V) term for the K-correction, within [0.0, 0.4].
+multiple_TRGB = False
+EBV_TRGB_multi = [0.0, 0.005, 0.01, 0.015, 0.02, 0.025, 0.03, 0.035, 0.04, 0.045, 0.05]         # E(B-V) term for the K-correction, within [0.0, 0.05].
+Teff_TRGB_multi = [3750, 4000, 4250, 4500, 4750, 5000, 5250]        # Teff term for the K-correction, within [3500, 6000].
+
+
+
+### Second PLR break for SN-host galaxies
+multiple_PLR_break2 = False
+break_P2_multi = [20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70] # second break in the PLR at P = break_P2 for SN-host galaxies
 
 
 
