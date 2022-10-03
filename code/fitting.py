@@ -1,5 +1,5 @@
 '''
-This module contains a function that fits the distance ladder to the different dataframes given.
+This module contains a function that fits the distance ladder to the different DataFrames given.
 '''
 import numpy as np
 import fit_parameters as fp
@@ -7,7 +7,7 @@ import fit_parameters as fp
 
 def fit_distance_ladder(DF_dict, cov_matrix = np.array([]), **kwargs):
     '''
-    This function return the raw restult from the distance ladder fit, with the parameters from the fit_parameters.py.
+    This function return the raw results from the distance ladder fit, with the parameters from the fit_parameters.py.
 
     Parameters
     ----------
@@ -23,7 +23,7 @@ def fit_distance_ladder(DF_dict, cov_matrix = np.array([]), **kwargs):
         Signal vector y from the model equation y = L*q that has been fitted by the function.
     q_dict : dict of numpy array
         A dictionary that contains the parameters result and their uncertainty for the vector q from the model equation
-        y = L*q that has been fitted by the function. A few other parameters (H0, chi2/2) are also in this dictionnary.
+        y = L*q that has been fitted by the function. A few other parameters (H0, chi2/2) are also in this dictionary.
     L : numpy matrix
         Design matrix L from the model equation y = L*q that has been fitted by the function.
     Sigma2 : numpy matrix
@@ -47,13 +47,15 @@ def fit_distance_ladder(DF_dict, cov_matrix = np.array([]), **kwargs):
         Cepheids = DF_dict['Cepheids']
         galaxies_Cep = Cepheids['Gal'].drop_duplicates().reset_index(drop=True)  # List of Cepheids-host galaxy
         if len(galaxies_Cep) != fp.N_galaxies_Cep:
-            print('ERROR: make sure that the value for N_galaxies_Cep in the Fit_parameters.py corresponds to the number of the galaxy in the Cepheids.csv file!')
+            print('ERROR: make sure that the value for N_galaxies_Cep in the Fit_parameters.py corresponds to the '
+                  'number of the galaxy in the Cepheids.csv file!')
             return
         # The anchors Cepheids
         Cepheids_anchors = DF_dict['Cepheids_anchors']
         anchors_Cep = Cepheids_anchors['Gal'].drop_duplicates().reset_index(drop=True)  # List of Cepheids-host galaxy
         if len(anchors_Cep) != fp.N_anchors_Cep:
-            print('ERROR: make sure that the value for N_anchors_Cep in the Fit_parameters.py corresponds to the number of the galaxy in the Cepheids_anchors.csv file!')
+            print('ERROR: make sure that the value for N_anchors_Cep in the Fit_parameters.py corresponds to the '
+                  'number of the galaxy in the Cepheids_anchors.csv file!')
             return
         # The MW Cepheids
         if fp.include_MW == True:

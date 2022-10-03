@@ -1,6 +1,6 @@
 '''
 This script runs multiple fits according to the parameters specified in the fit_parameters.py file. It aims to test
-different parametes for the K-corrections for both Cepheids and TRGB.
+different parameters for the K-corrections for both Cepheids and TRGB or for the PLR break2.
 '''
 import sys
 import os
@@ -24,7 +24,7 @@ def single_K_corr_run(fit_dir, **kwargs):
         os.mkdir(fit_dir)
 
     # Load the data
-    DF_dict, SNe_other, table_Kcorr = load_data(data_tmp='./data_tmp/', data_static='./data_static/')
+    DF_dict, SNe_other, table_Kcorr = load_data(data='./data/', data_static='./data_static/')
     interpolated_IHV = kwargs.get('interpolated_IHV')
 
     ### Relativistic corrections
@@ -126,7 +126,7 @@ def single_PLR_break2_run(fit_dir, break_P2):
         os.mkdir(fit_dir)
 
     # Load the data
-    DF_dict, SNe_other, table_Kcorr = load_data(data_tmp='./data_tmp/', data_static='./data_static/')
+    DF_dict, SNe_other, table_Kcorr = load_data(data='./data/', data_static='./data_static/')
 
     ### Relativistic corrections
     # Cepheids relativistic corrections
@@ -300,8 +300,8 @@ if __name__=='__main__':
                                description='TO DO',
                                formatter_class=ap.RawTextHelpFormatter)
     parser.add_argument(type=str, dest='fit_name', metavar='fit_name',
-                        help='Give a name to your fit. Determines the name of the folder containing all the results'
-                             'from the fit.')
+                        help='Give a name to your fits. Determines the name of the folder containing all the results '
+                             'from the fits.')
     parser.add_argument('--dir', type=str, dest='work_dir', metavar='work_dir',
                         default='./work_dir/',
                         help='Name of the working directory')

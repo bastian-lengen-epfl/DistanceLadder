@@ -26,7 +26,7 @@ def change_plot_parameters():
 
 def plot_individual_PL(DF_dict, q_dict, DF_dict_outliers, work_dir='./'):
     '''
-    Display the PLR for each Cepheid-host galaxies. The relation in the plot is a 2D linear relation.
+    Display the PLR for each Cepheid-host galaxy. The relation in the plot is a 2D linear relation.
     Therefore, the Wesenheit magnitude is corrected for metallicity, and for the zp offset for the
     MW Cepheids.
 
@@ -51,7 +51,7 @@ def plot_individual_PL(DF_dict, q_dict, DF_dict_outliers, work_dir='./'):
     # Usefull function
     def plot_ij(is_anchor):
         '''
-        Plot the individual PL relation for each galaxy
+        Plot the individual PL relation for each galaxy.
 
         Parameters
         ----------

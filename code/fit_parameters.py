@@ -55,7 +55,7 @@ FeH_TRGB = -1.75            # [Fe/H] term for the K-correction, within [-2., -1.
 
 
 ### Plot ###
-show_plots = False          # If you want to display the plot
+show_plots = False          # If you want to generate some plots
 
 ### Physics constants
 c = 299792.458              # km/s
@@ -78,7 +78,7 @@ Teff_TRGB_multi = [3750, 4000, 4250, 4500, 4750, 5000, 5250]        # Teff term 
 
 
 ### Second PLR break for SN-host galaxies
-multiple_PLR_break2 = False
+multiple_PLR_break2 = True
 break_P2_multi = [20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70] # second break in the PLR at P = break_P2 for SN-host galaxies
 
 

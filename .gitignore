@@ -1,5 +1,6 @@
 # Manually ignore
 data_tmp/
+data/
 work_dir/
 testing_notebook/
 .DS_Store

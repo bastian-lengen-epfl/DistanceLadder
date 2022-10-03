@@ -17,7 +17,7 @@ from astropy.utils.exceptions import AstropyWarning
 
 
 def Riess_to_data(Cepheids_R16, SNe_R16, Cepheids_LMC_R19, Cepheids_MW_R21,  data_static_dir='./data_static/',
-                  data_tmp_dir='./data_tmp'):
+                  data_dir='./data'):
     '''
     This script converts the data from R16, R19, R21 to the desired format.
     R16 CDS Table 4     -> Cepheids.csv and Cepheids_anchors.csv
@@ -36,8 +36,8 @@ def Riess_to_data(Cepheids_R16, SNe_R16, Cepheids_LMC_R19, Cepheids_MW_R21,  dat
     :param  Cepheids_MW: Path to the .csv file from R21 in the ./data_static/ directory.
     :type   data_static_dir: str
     :param  data_static_dir: Path to the data_static directory
-    :type   data_tmp_dir: str
-    :param  data_tmp_dir: Path to the data_tmp directory
+    :type   data_dir: str
+    :param  data_dir: Path to the data directory
     '''
     # Values used
     R = 0.386               # Wesenheit
@@ -148,15 +148,15 @@ def Riess_to_data(Cepheids_R16, SNe_R16, Cepheids_LMC_R19, Cepheids_MW_R21,  dat
 
 
     # Save everything
-    if not os.path.exists(data_tmp_dir):
-        print(f'I will create the {data_tmp_dir} directory for you !')
-        os.mkdir(data_tmp_dir)
-    Cepheids.to_csv(data_tmp_dir+'Cepheids.csv',index=False)
-    Cepheids_MW.to_csv(data_tmp_dir+'Cepheids_MW.csv',index=False)
-    Cepheids_anchors.to_csv(data_tmp_dir+'Cepheids_anchors.csv', index=False)
-    SNe_Cepheids.to_csv(data_tmp_dir + 'SNe_Cepheids.csv', index=False)
+    if not os.path.exists(data_dir):
+        print(f'I will create the {data_dir} directory for you !')
+        os.mkdir(data_dir)
+    Cepheids.to_csv(data_dir+'Cepheids.csv',index=False)
+    Cepheids_MW.to_csv(data_dir+'Cepheids_MW.csv',index=False)
+    Cepheids_anchors.to_csv(data_dir+'Cepheids_anchors.csv', index=False)
+    SNe_Cepheids.to_csv(data_dir + 'SNe_Cepheids.csv', index=False)
     return
-def H1PStars_to_data(Cepheids_MW, erase = False,  data_static_dir='./data_static/', data_tmp_dir='./data_tmp/'):
+def H1PStars_to_data(Cepheids_MW, erase = False,  data_static_dir='./data_static/', data_dir='./data/'):
     '''
     This function converts the data from Mauricio to the desired format. It can either add the MW Cepheids to the
     existing `/data_static/Cepheids_MW.csv` or erase it.
@@ -167,8 +167,8 @@ def H1PStars_to_data(Cepheids_MW, erase = False,  data_static_dir='./data_static
     :param  erase: Choose if you want to erase the Cepheids from R21 from the Cepheids_MW.csv, otherwise complete the .csv.
     :type   data_static_dir: str
     :param  data_static_dir: Path to the data_static directory
-    :type   data_tmp_dir: str
-    :param  data_tmp_dir: Path to the data_tmp directory
+    :type   data_dir: str
+    :param  data_dir: Path to the data directory
     '''
     # Rewrite files path:
     Cepheids_MW = data_static_dir + Cepheids_MW
@@ -197,18 +197,18 @@ def H1PStars_to_data(Cepheids_MW, erase = False,  data_static_dir='./data_static
     Cepheids_MW['sig_pi'] = tmp['Parallax_error']
 
     # ADD to the previously existing
-    if not os.path.exists(data_tmp_dir):
-        print(f'I will create the {data_tmp_dir} directory for you !')
-        os.mkdir(data_tmp_dir)
+    if not os.path.exists(data_dir):
+        print(f'I will create the {data_dir} directory for you !')
+        os.mkdir(data_dir)
     if erase == False:
-        tmp = pd.read_csv(data_tmp_dir+'Cepheids_MW.csv', sep=',')
+        tmp = pd.read_csv(data_dir+'Cepheids_MW.csv', sep=',')
         Cepheids_MW = pd.concat([tmp, Cepheids_MW]).reset_index(drop=True)
     # Save it
-    Cepheids_MW.to_csv(data_tmp_dir+'Cepheids_MW.csv', index=False)
+    Cepheids_MW.to_csv(data_dir+'Cepheids_MW.csv', index=False)
 
     return
 
-def Anand_to_data(TRGB_SNe_Anand, data_static_dir='./data_static/', data_tmp_dir='./data_tmp/'):
+def Anand_to_data(TRGB_SNe_Anand, data_static_dir='./data_static/', data_dir='./data/'):
     '''
     This script converts the data from Anand et al. (2021) to the desired format.
     Table 2         -> TRGB.csv, TRGB_anchors.csv and SNe_TRGB.csv
@@ -218,8 +218,8 @@ def Anand_to_data(TRGB_SNe_Anand, data_static_dir='./data_static/', data_tmp_dir
     :param  TRGB_SNe_Anand: Path to the .csv file from Anand et al. (2021) in the ./data_static/ directory.
     :type   data_static_dir: str
     :param  data_static_dir: Path to the data_static directory
-    :type   data_tmp_dir: str
-    :param  data_tmp_dir: Path to the data_tmp directory
+    :type   data_dir: str
+    :param  data_dir: Path to the data directory
     '''
     # Values used
     mu_N4258 = 29.397
@@ -268,15 +268,15 @@ def Anand_to_data(TRGB_SNe_Anand, data_static_dir='./data_static/', data_tmp_dir
 
 
     # Save everything
-    if not os.path.exists(data_tmp_dir):
-        print(f'I will create the {data_tmp_dir} directory for you !')
-        os.mkdir(data_tmp_dir)
-    TRGB.to_csv(data_tmp_dir+'TRGB.csv',index=False)
-    TRGB_anchors.to_csv(data_tmp_dir+'TRGB_anchors.csv', index=False)
-    SN.to_csv(data_tmp_dir + 'SNe_TRGB.csv', index=False)
+    if not os.path.exists(data_dir):
+        print(f'I will create the {data_dir} directory for you !')
+        os.mkdir(data_dir)
+    TRGB.to_csv(data_dir+'TRGB.csv',index=False)
+    TRGB_anchors.to_csv(data_dir+'TRGB_anchors.csv', index=False)
+    SN.to_csv(data_dir + 'SNe_TRGB.csv', index=False)
     return
 
-def Pantheon_to_data(SNe_pantheon, data_static_dir='./data_static/', data_tmp_dir='./data_tmp/'):
+def Pantheon_to_data(SNe_pantheon, data_static_dir='./data_static/', data_dir='./data/'):
     '''
     This script converts the data from the pantheon sample (Scolnic et al. 2018) to the desired format.
     Pantheon.txt         -> SNe_Hubble.csv
@@ -285,8 +285,8 @@ def Pantheon_to_data(SNe_pantheon, data_static_dir='./data_static/', data_tmp_di
     :param  SNe_pantheon: Path to the .txt file from Scolnic et al. (2021).
     :type   data_static_dir: str
     :param  data_static_dir: Path to the data_static directory in the ./data_static/ directory.
-    :type   data_tmp_dir: str
-    :param  data_tmp_dir: Path to the data_static directory in the ./data_tmp/ directory.
+    :type   data_dir: str
+    :param  data_dir: Path to the data_static directory in the ./data/ directory.
     '''
     # Rewrite files path:
     SNe_pantheon = data_static_dir + SNe_pantheon
@@ -301,8 +301,8 @@ def Pantheon_to_data(SNe_pantheon, data_static_dir='./data_static/', data_tmp_di
     SN['sig_z'] = tmp['dz']
 
     # Save everything
-    if not os.path.exists(data_tmp_dir):
-        print(f'I will create the {data_tmp_dir} directory for you !')
-        os.mkdir(data_tmp_dir)
-    SN.to_csv(data_tmp_dir + 'SNe_Hubble.csv', index=False)
+    if not os.path.exists(data_dir):
+        print(f'I will create the {data_dir} directory for you !')
+        os.mkdir(data_dir)
+    SN.to_csv(data_dir + 'SNe_Hubble.csv', index=False)
     return

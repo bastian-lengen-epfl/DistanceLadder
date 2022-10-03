@@ -10,10 +10,10 @@ from fitting import fit_distance_ladder
 
 def single_kappa_clipping(DF_dict, SNe_other, kappa=2.7, work_dir='./', **kwargs):
     '''
-    This function performs an outlier rejection by following the single-kappa clipping algorithm. It will split the
-    initial DataFrame into two different DataFrames. One will be fit, the other contains the outliers that won't be
-    fitted. Note that this function only reject points form the Cepheids, Cepheids_anchors, Cepheids_MW or
-    SNe Hubble DataFrames.
+    This function performs an outlier rejection following the single-kappa clipping algorithm. It splits the initial
+    DataFrame into two different DataFrames. One of them will be fitted, while the other contains the outliers that will
+    not be fitted. Note that this function only reject points form the Cepheids, Cepheids_anchors, Cepheids_MW
+    or SNe Hubble DataFrames.
 
     Parameters
     ----------
@@ -22,16 +22,16 @@ def single_kappa_clipping(DF_dict, SNe_other, kappa=2.7, work_dir='./', **kwargs
     SNe_other : pandas DataFrame
         DataFrame that contains the SNe that are outside the fitting range [z_min, z_max] for the Hubble diagram.
     kappa : float
-        The kappa parameters for which the rejection process stops. By default kappa is 2.7.
+        The kappa parameter for which the rejection process stops. By default kappa is 2.7.
     work_dir : string
-        working directory, by default ./
+        Working directory, by default ./
 
     Returns
     -------
     DF_dict : dict of pandas DataFrame
-        Dictionary that contains the different pandas DataFrame that will be fitted.
+        Dictionary containing the different pandas DataFrame that will be fitted.
     DF_dict_outlier : dict of pandas DataFrame
-        Dictionary that contains the different pandas DataFrame that will not be fitted.
+        Dictionary containing the different pandas DataFrame that will not be fitted.
     '''
     ### Use of kwargs for the multiple_run.py
     break_P2 = kwargs.get('break_P2', fp.break_P2)
@@ -79,27 +79,27 @@ def single_kappa_clipping(DF_dict, SNe_other, kappa=2.7, work_dir='./', **kwargs
         if fp.include_Cepheids == True:
             if index_worst<N_Cep:
                 index = index_worst
-                DF_dict_outliers['Cepheids'] = DF_dict_outliers['Cepheids']\
-                                             .append(DF_dict['Cepheids'].iloc[index])
+                DF_dict_outliers['Cepheids'] = pd.concat ([DF_dict_outliers['Cepheids'],
+                                                           DF_dict['Cepheids'].iloc[[index]]])
                 DF_dict['Cepheids'] = DF_dict['Cepheids']\
                                     .drop(index=index).reset_index(drop=True)
             elif index_worst<N_Cep+N_anc:
                 index = index_worst-N_Cep
-                DF_dict_outliers['Cepheids_anchors'] = DF_dict_outliers['Cepheids_anchors']\
-                                                    .append(DF_dict['Cepheids_anchors'].iloc[index])
+                DF_dict_outliers['Cepheids_anchors'] = pd.concat([DF_dict_outliers['Cepheids_anchors'],
+                                                                 DF_dict['Cepheids_anchors'].iloc[[index]]])
                 DF_dict['Cepheids_anchors'] = DF_dict['Cepheids_anchors']\
                                             .drop(index=index).reset_index(drop=True)
             elif ((fp.include_MW == True) and (index_worst<N_Cep+N_anc+N_MW)):
                 index = index_worst-N_Cep-N_anc
-                DF_dict_outliers['Cepheids_MW'] = DF_dict_outliers['Cepheids_MW']\
-                                                .append(DF_dict['Cepheids_MW'].iloc[index])
+                DF_dict_outliers['Cepheids_MW'] = pd.concat([DF_dict_outliers['Cepheids_MW'],
+                                                             DF_dict['Cepheids_MW'].iloc[[index]]])
                 DF_dict['Cepheids_MW'] = DF_dict['Cepheids_MW']\
                                         .drop(index=index).reset_index(drop=True)
         if ((fp.fit_aB == True) and (index_worst>len(y)-N_SN)):
             offset = len(y)-N_SN
             index = index_worst - offset
-            DF_dict_outliers['SNe_Hubble'] = DF_dict_outliers['SNe_Hubble']\
-                                           .append(DF_dict['SNe_Hubble'].iloc[index])
+            DF_dict_outliers['SNe_Hubble'] = pd.concat([DF_dict_outliers['SNe_Hubble'],
+                                                        DF_dict['SNe_Hubble'].iloc[[index]]])
             DF_dict['SNe_Hubble'] = DF_dict['SNe_Hubble']\
                                     .drop(index=index).reset_index(drop=True)
 

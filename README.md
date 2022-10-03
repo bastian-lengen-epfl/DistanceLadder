@@ -1,24 +1,34 @@
 # Distance ladder
-
 This folder contains all the scripts to process multivariate regression on the Cepheid- and/or TRGB-based distanced 
 ladder. The models used are initially based on Riess (2021b) but modified according to our needs.
+
+## Requirement
+The following packages are required to run this code:
+* `Python`
+* `Numpy`
+* `Pandas`
+* `Scipy`
+* `Matplotlib`
+* (`Astropy`) for the utility functions
+
+---
 ## Fit setup and data pre-processing
 Two things have to be done before fitting the distance ladder:
 * Modify the `fit_parameters.py` in order to choose what model you want to fit.
-* Include your data in the `/data_static` folder. According to your needs the following `.csv` have to be in this folder:
-  * `/data_static/Cepheids.csv` containing the data from Cepheids in SN-host galaxies.
-  * `/data_static/Cepheids_MW.csv` containing the data from the MW-Cepheids.
-  * `/data_static/Cepheids_anchors.csv` containing the data from the Cepheids in anchor galaxies.
-  * `/data_static/TRGB.csv` containing the data for TRGB in SN-host galaxies.
-  * `/data_static/TRGB_anchors.csv` containing the data from the TRGB in anchor galaxies.
-  * `/data_static/SNe_Cepheids.csv` containing the data from SNe in Cepheid-host galaxies.
-  * `/data_static/SNe_TRGB.csv` containing the data from SNe in TRGB-host galaxies.
-  * `/data_static/SNe_Hubble.csv` containing the data from high-z SNe for the redshift-magnitude diagram.
+* Include your data in a `/data_tmp` folder. According to your needs the following `.csv` have to be in this folder:
+  * `/data/Cepheids.csv` containing the data from Cepheids in SN-host galaxies.
+  * `/data/Cepheids_MW.csv` containing the data from the MW-Cepheids.
+  * `/data/Cepheids_anchors.csv` containing the data from the Cepheids in anchor galaxies.
+  * `/data/TRGB.csv` containing the data for TRGB in SN-host galaxies.
+  * `/data/TRGB_anchors.csv` containing the data from the TRGB in anchor galaxies.
+  * `/data/SNe_Cepheids.csv` containing the data from SNe in Cepheid-host galaxies.
+  * `/data/SNe_TRGB.csv` containing the data from SNe in TRGB-host galaxies.
+  * `/data/SNe_Hubble.csv` containing the data from high-z SNe for the redshift-magnitude diagram.
 
 ### Cepheids data 
 The `.csv` have to be in a specific form in order to run the code. The columns name are not revelant but their order is.
 
-For the `/data_static/Cepheids.csv`the columns have to be in this order:
+For the `/data/Cepheids.csv`the columns have to be in this order:
 1. Galaxy host
 2. Log10 of the pulsation period
 3. Wesenheit magnitude
@@ -27,8 +37,8 @@ For the `/data_static/Cepheids.csv`the columns have to be in this order:
 6. Redshift
 7. Color term V-I, only used for K-corrections. It can be a column full of `NaN` if you don't use the K-corrections
 
-For the `/data_static/Cepheids_MW.csv`:
-1. Galaxy host. Here the name stands for the dataset used (`'MW1'` for dataset1, `'MW2'` for 2, ...).
+For the `/data/Cepheids_MW.csv`:
+1. Galaxy host. Here the name stands for the dataset used (`'MW1'` for dataset1, `'MW2'` for dataset2, ...).
 2. Log10 of the pulsation period
 3. Wesenheit magnitude
 4. Uncertainty of the Wesenheit magnitude
@@ -38,7 +48,7 @@ For the `/data_static/Cepheids_MW.csv`:
 8. Parallax
 9. Uncertainty of the parallax
 
-For the `/data_static/Cepheids_anchors.csv`:
+For the `/data/Cepheids_anchors.csv`:
 1. Galaxy host
 2. Log10 of the pulsation period
 3. Wesenheit magnitude
@@ -51,7 +61,7 @@ For the `/data_static/Cepheids_anchors.csv`:
 
 
 ### TRGB data 
-For the `/data_static/TRGB.csv`:
+For the `/data/TRGB.csv`:
 1. Galaxy host 
 2. Observed I-band magnitude of the TRGB
 3. Uncertainty of the observed I-band magnitude
@@ -59,7 +69,7 @@ For the `/data_static/TRGB.csv`:
 5. Redshift of the host galaxy
 6. Color term V-I. It can be a column full of `NaN` if the model choose don't use the color term.
 
-For the `/data_static/TRGB_anchors.csv`:
+For the `/data/TRGB_anchors.csv`:
 1. Galaxy host 
 2. Observed I-band magnitude of the TRGB
 3. Uncertainty of the observed I-band magnitude
@@ -70,34 +80,72 @@ For the `/data_static/TRGB_anchors.csv`:
 8. Uncertainty of the geometric distance modulus
 
 ### SNe data
-For the `/data_static/SNe_Cepheids.csv` and `/data_static/SNe_TRGB.csv`.
+For the `/data/SNe_Cepheids.csv` and `/data_tmp/SNe_TRGB.csv`.
 1) Galaxy host
 2) Apparent B peak magnitude
 3) Uncertainty of the apparent B peak magnitude
 
-For the `/data_static/SNe_Hubble.csv`:
+For the `/data/SNe_Hubble.csv`:
 1) SN name
 2) Apparent B peak magnitude
 3) Uncertainty of the apparent B peak magnitude
 4) Redshift
 5) Uncertainty of the redshift
 
-### Note
-If you want to generate these `.csv` from the pre-loaded data from `/data_static/Riess/`, `/data_static/Pantheon/`,
-`/data_static/Anand/`, `/data_static/H1PStars/`, a script is available in the `/other_functions/` folder. 
 
-Run, from the `./` directory, the command:
-`python3 other_functions/setup.py RH [--dir 'path_to_data_static'] [--dirtmp 'path_to_data_tmp']` . 
+### Generating the different `.csv`
+It is possible to generate these `.csv` from the preloaded data in the `/data_static` folder:
 
-Or the command: `python3 setup.py RH `
+| Folder                   | Author                        | Bibcode               | Output                                                     |
+|--------------------------|-------------------------------|-----------------------|------------------------------------------------------------|
+| `/data_static/Riess/`    | Riess et al. (2016)           | [2016ApJ...826...56R] | Cepheids.csv<br/>Cepheids_anchors.csv<br/>SNe_Cepheids.csv |
+| `/data_static/Riess/`    | Riess et al. (2019)           | [2019ApJ...876...85R] | Cepheids_anchors.csv (add LMC Cepheids)                    |
+| `/data_static/Riess/`    | Riess et al. (2021a)          | [2021ApJ...908L...6R] | Cepheids_MW.csv                                            |
+| `/data_static/Pantheon/` | Scolnic et al. (2018)         | [2018ApJ...859..101S] | SNe_Hubble.csv                                             |
+| `/data_static/Anand/`    | Anand et al. (2021)           | [2021AJ....162...80A] | Cepheids_MW.csv                                            |
+| `/data_static/H1PStars/` | Cruz Reyes & Anderson  (2022) | [TBD]                 | Cepheids_MW.csv (add OR erase those from R21)              |
 
-You can choose
-if you want to use the MW Cepheids from R21 (R), from H1PStars (H) or both (RH). 
 
+
+To use these data, the script `/other_functions/setup.py` is available. This will generate the `.csv` files in the 
+expected format from these datasets. To use this feature, simply run, from the `./` directory, the command:
+
+`python3 other_functions/setup.py RH [--dir 'path_to_data_static'] [--dirdata 'path_to_data']` . 
+
+You can specify what dataset you want to use for the MW Cepheids. R for the R21 dataset, H for the H1Pstars dataset
+or RH for both dataset.
+
+---
 ## Fit
-To run the simulation with the data from the `/data_static/` folder and the parameters from the `fit_parameters.py`,
+
+### Fit parameters
+In order to obtain the desired fit, it is best to modify the various parameters in the `/code/fit_parameters.py` file. 
+This file contains all the different parameters that can be modified to obtain the desired fit.
+
+In particular, it is possible to choose whether you want to make a Cepheid-based distance ladder, TRGB-based distance 
+ladder or common distance ladder fit. Many other parameters are determined in this file, such as the consideration of 
+the Redshift Leavitt Bias, an outlier rejection algorithm, the fit of the redshift-magnitude diagram, etc... The easiest
+way is to look at the file, each parameter is explained in it.
+
+### Single fit
+To run the simulation with the data from the `/data/` folder and the parameters from the `/code/fit_parameters.py`,
 just run, from the `./` directory, the command:
 
 `python3 code/run.py fit_name [--dir 'path_to_work_dir]'`
+
+The results will be saved in your working directory (by default `./work_dir/`).
+
+### Multiple fit
+It is also possible to run multiple simulations. That is, to run several simulations by scanning different values of a 
+specific parameter. The main utility of this feature is to be able to scan multiple values for a second PLR break for 
+long period Cepheids. This has also been used in the past to measure the impact of different parameters on the 
+K-correction Cepheids and TRGB. 
+
+As before, you must have the data in the requested format in the `/data/` folder, and modify the 
+`/code/fit_parameters.py` parameters to perform the desired simulations. 
+
+Then, just run, from the `./` directory, the command:
+
+`python3 code/multiple_run.py fit_name [--dir 'path_to_work_dir]'`
 
 The results will be saved in your working directory (by default `./work_dir/`).
