@@ -13,7 +13,7 @@ from fitting import fit_distance_ladder
 from load_data import load_data
 from relativistic_corrections import RLB_correction, interpolated_K_corr_Cep,  interpolated_K_corr_TRGB
 from outliers_rejection import single_kappa_clipping
-from plots import plot_individual_PL, plot_global_PL, plot_SNe
+from plots import plot_individual_PL, plot_global_PL, plot_SNe, plot_Cepheids_vs_TRGB_distances
 
 
 def run(fit_name, work_dir):
@@ -79,34 +79,40 @@ def run(fit_name, work_dir):
         DF_dict['SNe_Hubble'].to_csv(data_dir + 'SNe_Hubble.csv', index=False)
 
     ### Save results
+    pkl_dir = work_dir + 'pkl/'
+    if not os.path.exists(pkl_dir):
+        print(f'I will create the {pkl_dir} directory for you !')
+        os.mkdir(pkl_dir)
     print('Pickling the variable y, q_dict, L and Sigma2...')
-    y_pkl = open(work_dir + 'y.pickle', 'wb')
+    y_pkl = open(pkl_dir + 'y.pkl', 'wb')
     pickle.dump(y, y_pkl)
     y_pkl.close()
-    q_dict_pkl = open(work_dir + 'q_dict.pickle', 'wb')
+    q_dict_pkl = open(pkl_dir + 'q_dict.pkl', 'wb')
     pickle.dump(q_dict, q_dict_pkl)
     q_dict_pkl.close()
-    L_pkl = open(work_dir + 'L.pickle', 'wb')
+    L_pkl = open(pkl_dir + 'L.pkl', 'wb')
     pickle.dump(L, L_pkl)
     L_pkl.close()
-    Sigma2_pkl = open(work_dir + 'Sigma2.pickle', 'wb')
-    pickle.dump(Sigma2,Sigma2_pkl)
+    Sigma2_pkl = open(pkl_dir + 'Sigma2.pkl', 'wb')
+    pickle.dump(Sigma2, Sigma2_pkl)
     Sigma2_pkl.close()
 
     ### Plots
     if fp.show_plots == True:
         if fp.outlier_rejection == False:
             if fp.include_Cepheids == True:
-                plot_individual_PL(DF_dict, q_dict, dict({}), work_dir=work_dir) # Empty dict for outliers
-                plot_global_PL(DF_dict, q_dict, dict({}), work_dir=work_dir)  # Empty dict for outliers
+                plot_individual_PL(DF_dict, q_dict, {}, work_dir=work_dir) # Empty dict for outliers
+                plot_global_PL(DF_dict, q_dict, {}, work_dir=work_dir)  # Empty dict for outliers
             if fp.fit_aB == True:
-                plot_SNe(DF_dict, q_dict, dict({}), work_dir=work_dir)
+                plot_SNe(DF_dict, q_dict, {'SNe_Hubble': SNe_other}, work_dir=work_dir) # Only out of range SNe for outliers
         else:
             if fp.include_Cepheids == True:
                 plot_individual_PL(DF_dict, q_dict, DF_dict_outliers, work_dir=work_dir)
                 plot_global_PL(DF_dict, q_dict, DF_dict_outliers, work_dir=work_dir)
             if fp.fit_aB == True:
                 plot_SNe(DF_dict, q_dict, DF_dict_outliers, work_dir=work_dir)
+        if ((fp.include_Cepheids == True) and (fp.include_TRGB == True)):
+            plot_Cepheids_vs_TRGB_distances(DF_dict, q_dict, work_dir=work_dir)
 
     ### Display results
     for str in q_dict:

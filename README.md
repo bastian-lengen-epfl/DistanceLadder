@@ -26,7 +26,7 @@ Two things have to be done before fitting the distance ladder:
   * `/data/SNe_Hubble.csv` containing the data from high-z SNe for the redshift-magnitude diagram.
 
 ### Cepheids data 
-The `.csv` have to be in a specific form in order to run the code. The columns name are not revelant but their order is.
+The `.csv` have to be in a specific form in order to run the code. The columns names are not revelant but their order is.
 
 For the `/data/Cepheids.csv`the columns have to be in this order:
 1. Galaxy host

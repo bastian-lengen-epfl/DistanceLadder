@@ -48,15 +48,15 @@ def fit_distance_ladder(DF_dict, cov_matrix = np.array([]), **kwargs):
         galaxies_Cep = Cepheids['Gal'].drop_duplicates().reset_index(drop=True)  # List of Cepheids-host galaxy
         if len(galaxies_Cep) != fp.N_galaxies_Cep:
             print('ERROR: make sure that the value for N_galaxies_Cep in the Fit_parameters.py corresponds to the '
-                  'number of the galaxy in the Cepheids.csv file!')
-            return
+                  'number of galaxies in the Cepheids.csv file!')
+            exit()
         # The anchors Cepheids
         Cepheids_anchors = DF_dict['Cepheids_anchors']
         anchors_Cep = Cepheids_anchors['Gal'].drop_duplicates().reset_index(drop=True)  # List of Cepheids-host galaxy
         if len(anchors_Cep) != fp.N_anchors_Cep:
             print('ERROR: make sure that the value for N_anchors_Cep in the Fit_parameters.py corresponds to the '
-                  'number of the galaxy in the Cepheids_anchors.csv file!')
-            return
+                  'number of galaxies in the Cepheids_anchors.csv file!')
+            exit()
         # The MW Cepheids
         if fp.include_MW == True:
             Cepheids_MW = DF_dict['Cepheids_MW']
@@ -82,9 +82,9 @@ def fit_distance_ladder(DF_dict, cov_matrix = np.array([]), **kwargs):
         # Milky Way Cepheids
         if fp.include_MW == True:
             if fp.fixed_zp == True:
-                if fp.multiple_zp == True:
-                    print('ERROR! you cannot use a fixed zp with multiple zp.')
-                    return
+                if (fp.multiple_zp == True):
+                    print('ERROR! you cannot use a fixed zp with multiple_zp = True.')
+                    exit()
                 y = np.append(y, Cepheids_MW['mW'] \
                               - 10 + 5 * np.log10(Cepheids_MW['pi']) \
                               + 5 / np.log(10) * fp.zp / Cepheids_MW['pi'])
@@ -250,13 +250,15 @@ def fit_distance_ladder(DF_dict, cov_matrix = np.array([]), **kwargs):
         galaxies_TRGB = TRGB['Gal'].drop_duplicates().reset_index(drop=True)  # List of TRGB-host galaxies
         if len(galaxies_TRGB) != fp.N_galaxies_TRGB:
             print('ERROR: make sure that the value for N_galaxies_TRGB in the Fit_parameters.py corresponds to \
-                   the number of the galaxy in the TRGB.csv file!')
+                    the number of galaxies in the TRGB.csv file!')
+            exit()
         #  TRGB anchors
         TRGB_anchors = DF_dict['TRGB_anchors']
         anchors_TRGB = TRGB_anchors['Gal'].drop_duplicates().reset_index(drop=True)  # List of TRGB-host galaxies
         if len(anchors_TRGB) != fp.N_anchors_TRGB:
             print('ERROR: make sure that the value for N_anchors_TRGB in the Fit_parameters.py corresponds to \
-                   the number of the galaxy in the TRGB_anchors.csv file!')
+                   the number of galaxies in the TRGB_anchors.csv file!')
+            exit()
         #  SNe_TRGB
         SNe_TRGB = DF_dict['SNe_TRGB']
 

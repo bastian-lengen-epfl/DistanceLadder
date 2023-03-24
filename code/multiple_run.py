@@ -83,17 +83,21 @@ def single_K_corr_run(fit_dir, **kwargs):
         DF_dict['SNe_Hubble'].to_csv(data_dir + 'SNe_Hubble.csv', index=False)
 
     ### Save results
+    pkl_dir = fit_dir + 'pkl/'
+    if not os.path.exists(pkl_dir):
+        print(f'I will create the {pkl_dir} directory for you !')
+        os.mkdir(pkl_dir)
     print('Pickling the variable y, q_dict, L and Sigma2...')
-    y_pkl = open(fit_dir + 'y.pickle', 'wb')
+    y_pkl = open(pkl_dir + 'y.pkl', 'wb')
     pickle.dump(y, y_pkl)
     y_pkl.close()
-    q_dict_pkl = open(fit_dir + 'q_dict.pickle', 'wb')
+    q_dict_pkl = open(pkl_dir + 'q_dict.pkl', 'wb')
     pickle.dump(q_dict, q_dict_pkl)
     q_dict_pkl.close()
-    L_pkl = open(fit_dir + 'L.pickle', 'wb')
+    L_pkl = open(pkl_dir + 'L.pkl', 'wb')
     pickle.dump(L, L_pkl)
     L_pkl.close()
-    Sigma2_pkl = open(fit_dir + 'Sigma2.pickle', 'wb')
+    Sigma2_pkl = open(pkl_dir + 'Sigma2.pkl', 'wb')
     pickle.dump(Sigma2, Sigma2_pkl)
     Sigma2_pkl.close()
 
@@ -143,7 +147,7 @@ def single_PLR_break2_run(fit_dir, break_P2):
         if fp.Kcorr_TRGB == True:
             print('Start of the K-correction the TRGB...')
             interpolated_IHV = interpolated_K_corr_TRGB(DF_dict, table_Kcorr,fp.Teff_TRGB,fp.logg_TRGB,
-                                                        fp.FeH_TRGB,fp.EBV_TRGB,interpolated_IHV)
+                                                        fp.FeH_TRGB,fp.EBV_TRGB)
 
     ### Fitting
     # Outliers rejection (Cepheids and SNe only)
@@ -180,17 +184,21 @@ def single_PLR_break2_run(fit_dir, break_P2):
         DF_dict['SNe_Hubble'].to_csv(data_dir + 'SNe_Hubble.csv', index=False)
 
         ### Save results
+        pkl_dir = fit_dir + 'pkl/'
+        if not os.path.exists(pkl_dir):
+            print(f'I will create the {pkl_dir} directory for you !')
+            os.mkdir(pkl_dir)
         print('Pickling the variable y, q_dict, L and Sigma2...')
-        y_pkl = open(fit_dir + 'y.pickle', 'wb')
+        y_pkl = open(pkl_dir + 'y.pkl', 'wb')
         pickle.dump(y, y_pkl)
         y_pkl.close()
-        q_dict_pkl = open(fit_dir + 'q_dict.pickle', 'wb')
+        q_dict_pkl = open(pkl_dir + 'q_dict.pkl', 'wb')
         pickle.dump(q_dict, q_dict_pkl)
         q_dict_pkl.close()
-        L_pkl = open(fit_dir + 'L.pickle', 'wb')
+        L_pkl = open(pkl_dir + 'L.pkl', 'wb')
         pickle.dump(L, L_pkl)
         L_pkl.close()
-        Sigma2_pkl = open(fit_dir + 'Sigma2.pickle', 'wb')
+        Sigma2_pkl = open(pkl_dir + 'Sigma2.pkl', 'wb')
         pickle.dump(Sigma2, Sigma2_pkl)
         Sigma2_pkl.close()
 

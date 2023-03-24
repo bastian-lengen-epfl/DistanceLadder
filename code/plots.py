@@ -469,10 +469,7 @@ def plot_SNe(DF_dict, q_dict, DF_dict_outliers, work_dir='./'):
 
     ### Load the SNe DF
     SNe = DF_dict['SNe_Hubble']
-    if bool(DF_dict_outliers) == True:
-        SNe_out = DF_dict_outliers['SNe_Hubble']
-    else:
-        SNe_out = pd.DataFrame(columns=SNe.columns)  # Empty DF if no outliers
+    SNe_out = DF_dict_outliers['SNe_Hubble']
 
     filter = ((SNe['z']<fp.z_max)&(SNe['z']>fp.z_min))
     SNe_out = pd.concat([SNe_out, SNe[~filter]], ignore_index=True)
@@ -528,3 +525,86 @@ def plot_SNe(DF_dict, q_dict, DF_dict_outliers, work_dir='./'):
     print('Saving the resdhift-magnitude plot...')
     plt.savefig(fig_dir + 'redshift_magnitude.png', bbox_inches='tight', dpi=200)
     return
+
+def plot_Cepheids_vs_TRGB_distances(DF_dict, q_dict, work_dir='./'):
+    '''
+        Display the comparison between Cepheid- vs TRGB- distances.
+
+        Parameters
+        ----------
+        DF_dict : dict of pandas DataFrame
+            Dictionary that contains the different pandas DataFrame that have been fitted.
+        q_dict : dict of numpy array
+            A dictionary that contains the fit parameters and their uncertainty.
+        work_dir : str
+            working directory, by default ./
+    '''
+    ### Check and create the figure directory
+    fig_dir = work_dir + 'figure/'
+    if not os.path.exists(fig_dir):
+        print(f'I will create the {fig_dir} directory for you.')
+        os.mkdir(fig_dir)
+
+    ### Load the parameters
+    # Get the common galaxies
+    Gal_Cep = set(DF_dict['Cepheids']['Gal'].unique())
+    Gal_TRGB = set(DF_dict['TRGB']['Gal'].unique())
+    Gal_both = Gal_Cep.intersection(Gal_TRGB)
+
+    # Extract the distances and error for those galaxies
+    mu_Cepheid, err_mu_Cepheid = [], []
+    mu_TRGB, err_mu_TRGB = [], []
+    for gal in Gal_both:
+        [mu, err] = q_dict[f'mu_{gal}']
+        mu_Cepheid.append(mu)
+        err_mu_Cepheid.append(err)
+        [Dmu, err] = q_dict[f'Dmu_{gal}']
+        mu_TRGB.append(mu + Dmu)
+        err_mu_TRGB.append(err)
+    Delta_mu=np.array(mu_TRGB)-np.array(mu_Cepheid)
+
+    ### Plot
+    # Create the figure
+    fig, ax = plt.subplots(nrows=2, ncols=1, gridspec_kw={'height_ratios': [3, 1]})
+    fig.set_figheight(7)
+    fig.set_figwidth(12)
+    fig.subplots_adjust(wspace=0, hspace=0)
+
+    # Top panel
+    ax[0].errorbar(mu_Cepheid, mu_TRGB, yerr=err_mu_TRGB, xerr=err_mu_Cepheid, marker='.', ms=12, mfc="red", mec="k",
+                   ls="", c="k")
+    ax[0].set_ylabel('$\mu_0$ TRGB [mag]', size=16)
+    xlims, ylims = ax[0].get_xlim(), ax[0].get_ylim()
+    bot = np.ravel([xlims, ylims]).min()
+    top = np.ravel([xlims, ylims]).max()
+    ax[0].plot([bot, top], [bot, top], '--k')
+    ax[0].set_ylim(ylims)
+    ax[0].set_xlim(xlims)
+    ax[0].tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)
+    ax[0].tick_params(axis='both', which='major', labelsize=12)
+
+    # Bottom panel
+    yerr = np.sqrt(np.array(err_mu_TRGB)**2+np.array(err_mu_Cepheid)**2)
+    ax[1].errorbar(mu_Cepheid, Delta_mu, yerr=yerr, xerr=err_mu_Cepheid, marker='.', ms=12,
+                   mfc="red", mec="k", ls="", c="k")
+    ax[1].set_ylabel('$\Delta\mu_0$ [mag]', size=16)
+    ax[1].set_xlabel('$\mu_0$ Cepheids [mag]', size=16)
+    ax[1].plot(xlims, [0, 0], '--k')
+    ax[1].plot(xlims, 2*[np.mean(Delta_mu)], '--r', label=f'mean = {np.mean(Delta_mu):.4f}')
+    ax[1].legend(loc='upper left')
+    ax[1].tick_params(axis='both', which='major', labelsize=12)
+    ax[1].set_xlim(xlims)
+    ax2 = ax[1].twiny()
+    ax2.errorbar(mu_Cepheid, Delta_mu, yerr=yerr, xerr=err_mu_Cepheid, marker='.', ms=12,
+                 mfc="red", mec="k", ls="", c="k")
+    ax2.tick_params(axis='both', which='major', labelsize=12)
+
+    # Add text
+    for (i, gal) in enumerate(Gal_both):
+        muc, mut = mu_Cepheid[i], mu_TRGB[i]
+        ax[0].text(muc - 0.05, mut + 0.15 - 0.3 * (muc >= mut), gal)
+        ax[1].text(muc - 0.05, np.array(mut) - muc + 0.1 - 0.2 * (muc >= mut), gal)
+
+    ### Save
+    print('Saving the TRGB-Cepheid distance plot...')
+    plt.savefig(fig_dir + 'Cepheid_vs_TRGB_distance.png', bbox_inches='tight', dpi=200)

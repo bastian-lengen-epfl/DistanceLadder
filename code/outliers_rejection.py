@@ -134,18 +134,18 @@ def single_kappa_clipping(DF_dict, SNe_other, kappa=2.7, work_dir='./', **kwargs
         os.mkdir(out_dir)
     if fp.include_Cepheids == True:
         N = len(DF_dict_outliers['Cepheids'])
-        print(f'A total of {N} Cepheids has been excluded from the Cepheids DataFrame.')
+        print(f'A total of {N} Cepheids have been excluded from the Cepheids DataFrame.')
         DF_dict_outliers['Cepheids'].to_csv(out_dir + 'Cepheids.csv', index=False)
         N = len(DF_dict_outliers['Cepheids_anchors'])
-        print(f'A total of {N} Cepheids has been excluded from the Cepheids_anchor DataFrame.')
+        print(f'A total of {N} Cepheids have been excluded from the Cepheids_anchor DataFrame.')
         DF_dict_outliers['Cepheids_anchors'].to_csv(out_dir + 'Cepheids_anchors.csv', index=False)
         if fp.include_MW == True:
             N = len(DF_dict_outliers['Cepheids_MW'])
-            print(f'A total of {N} Cepheids has been excluded from the Cepheids_MW DataFrame.')
+            print(f'A total of {N} Cepheids have been excluded from the Cepheids_MW DataFrame.')
             DF_dict_outliers['Cepheids_MW'].to_csv(out_dir + 'Cepheids_MW.csv', index=False)
     if fp.fit_aB == True:
         N = len(DF_dict_outliers['SNe_Hubble'])-len(SNe_other)
-        print(f'A total of {N} supernovae has been excluded from the SNe_Hubble DataFrame.')
+        print(f'A total of {N} supernovae have been excluded from the SNe_Hubble DataFrame.')
         DF_dict_outliers['SNe_Hubble'].to_csv(out_dir + 'SNe_Hubble.csv', index=False)
 
     return DF_dict, DF_dict_outliers

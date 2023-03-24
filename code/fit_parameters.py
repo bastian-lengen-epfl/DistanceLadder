@@ -3,18 +3,18 @@ include_Cepheids = True
 N_galaxies_Cep = 19         # Number of SN-host galaxies
 N_anchors_Cep = 2           # Number of anchors
 include_MW = True           # Include the MW-Cepheids and their parallax
-multiple_zp = True          # Fits for different zp for different datasets
+multiple_zp = False         # Fits for different zp for different datasets (eg. MW1 = R19, MW2 = H1Pstars)
 fixed_zp = False            # Force the parallax zero point to a given value and don't fit it (only  works with 1 zp)
 zp = -0.014                 # zp in as. ONLY IF fixed_zp = True
 sig_zp = 0.005		        # zp uncertainty in as. ONLY IF fixed_zp = True
 fixed_Zw = False            # Force the metallicity slope Zw to a given value and don't fit for it
 Zw = 0                      # Slope of the metallicity effect on the PLR in dex. ONLY IF fixed_Zw = True
 sig_Zw = 0		            # Zw uncertainty in dex, ONLY IF fixed_Zw = True
-PLR_break = True            # Include a break in the PLR at P = break_P
+PLR_break = False           # Include a break in the PLR at P = break_P
 break_P = 10                # Period of the PLR-break in days. It also defines the pivot period.
 PLR_break2 = False          # Include a second break in the PLR at P = break_P2 for SN-host galaxies
 break_P2 = 35               # Period of the second PLR-break in days
-added_scatter = 0           # Add dispersion to the Cepheids (See Moertsell et al. 2021, [2021arXiv210511461M])
+added_scatter = 0.0197      # Add dispersion to the Cepheids (See Moertsell et al. 2021, [2021arXiv210511461M])
 
 
 ### TRGB ###
@@ -55,7 +55,7 @@ FeH_TRGB = -1.75            # [Fe/H] term for the K-correction, within [-2., -1.
 
 
 ### Plot ###
-show_plots = False          # If you want to generate some plots
+show_plots = True          # If you want to generate some plots
 
 ### Physics constants
 c = 299792.458              # km/s
@@ -74,7 +74,6 @@ EBV_Cep_multi = [0.0, 0.005, 0.01, 0.015, 0.02, 0.025, 0.03, 0.035, 0.04, 0.045,
 multiple_TRGB = False
 EBV_TRGB_multi = [0.0, 0.005, 0.01, 0.015, 0.02, 0.025, 0.03, 0.035, 0.04, 0.045, 0.05]         # E(B-V) term for the K-correction, within [0.0, 0.05].
 Teff_TRGB_multi = [3750, 4000, 4250, 4500, 4750, 5000, 5250]        # Teff term for the K-correction, within [3500, 6000].
-
 
 
 ### Second PLR break for SN-host galaxies
