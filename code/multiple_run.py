@@ -258,8 +258,8 @@ def multiple_run(fit_name, work_dir):
 
     ### Multiple K-corr run
     interpolated_IHV, interpolated_I = None, None
+    q_summary = []
     if fp.multiple_Cep == True:
-        q_summary = []
         for EBV in fp.EBV_Cep_multi:
             print(f'*'.center(80, '*'))
             print(f' EBV = {EBV} '.center(80, '*'))
@@ -269,7 +269,6 @@ def multiple_run(fit_name, work_dir):
             q_string['EBV_Cep'] = EBV
             q_summary.append(q_string)
     elif fp.multiple_TRGB == True:
-        q_summary = []
         for Teff in fp.Teff_TRGB_multi:
             for EBV in fp.EBV_TRGB_multi:
                 print(f'*'.center(80, '*'))
@@ -285,8 +284,7 @@ def multiple_run(fit_name, work_dir):
                 q_summary.append(q_string)
 
     ### Multiple PLR_break2 run
-    if fp.multiple_PLR_break2 == True:
-        q_summary = []
+    elif fp.multiple_PLR_break2 == True:
         for break_P2 in fp.break_P2_multi:
             print(f'*'.center(80, '*'))
             print(f' break_P2 = {break_P2} '.center(80, '*'))
@@ -298,7 +296,7 @@ def multiple_run(fit_name, work_dir):
 
     ### Save pkl
     print('Pickling the summary variable q_summary...')
-    q_summary_pkl = open(work_dir + 'q_summary.pickle', 'wb')
+    q_summary_pkl = open(work_dir + 'q_summary.pkl', 'wb')
     pickle.dump(q_summary, q_summary_pkl)
     q_summary_pkl.close()
     return 0

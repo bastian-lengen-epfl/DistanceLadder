@@ -18,7 +18,7 @@ added_scatter = 0.0197      # Add dispersion to the Cepheids (See Moertsell et a
 
 
 ### TRGB ###
-include_TRGB = False
+include_TRGB = True
 N_galaxies_TRGB = 12        # Number of SN-host galaxies
 N_anchors_TRGB = 1          # Number of anchors
 use_color = True            # Consider the color term (V-I) for the TRGB (See Anand et al. 2021, [2021AJ....162...80A])
@@ -40,7 +40,7 @@ z_max = 0.150               # Max redshift to consider when fitting for aB
 
 ### Outlier ###
 outlier_rejection = True    # Include kappa-clipping outlier rejection
-kappa = 2.7                 # Value for the kappa-clipping process
+kappa = 3.3                 # Value for the kappa-clipping process
 
 
 ### Relativistic corrections ###
@@ -77,7 +77,7 @@ Teff_TRGB_multi = [3750, 4000, 4250, 4500, 4750, 5000, 5250]        # Teff term 
 
 
 ### Second PLR break for SN-host galaxies
-multiple_PLR_break2 = True
+multiple_PLR_break2 = False
 break_P2_multi = [20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70] # second break in the PLR at P = break_P2 for SN-host galaxies
 
 
