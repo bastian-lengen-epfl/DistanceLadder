@@ -72,7 +72,7 @@ def fit_distance_ladder(DF_dict, cov_matrix = np.array([]), **kwargs):
         diag = np.append(diag, err)
         # Anchors
         y = np.append(y, Cepheids_anchors['mW'] - Cepheids_anchors['mu'])
-        err = (Cepheids_anchors['sig_mW'] + fp.added_scatter) ** 2 + Cepheids_anchors['sig_mu'] ** 2
+        err = (Cepheids_anchors['sig_mW'] + fp.added_scatter) ** 2
         diag = np.append(diag, err)
         # External constraints (Delta mu from anchors = 0)
         y = np.append(y, np.zeros([1, fp.N_anchors_Cep]))
@@ -269,7 +269,7 @@ def fit_distance_ladder(DF_dict, cov_matrix = np.array([]), **kwargs):
         diag = np.append(diag, err)
         #  TRGB anchors
         add_y = np.append(add_y, TRGB_anchors['m'] - TRGB_anchors['A'] - TRGB_anchors['mu'])
-        err = TRGB_anchors['sig_m'] ** 2 + (0.5 * TRGB_anchors['A']) ** 2 + TRGB_anchors['sig_mu'] ** 2
+        err = TRGB_anchors['sig_m'] ** 2 + (0.5 * TRGB_anchors['A']) ** 2
         diag = np.append(diag, err)
         if fp.use_color == True:
             color = TRGB['V-I'] - fp.mid_VI

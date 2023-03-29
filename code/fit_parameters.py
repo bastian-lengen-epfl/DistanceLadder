@@ -14,11 +14,11 @@ PLR_break = False           # Include a break in the PLR at P = break_P
 break_P = 10                # Period of the PLR-break in days. It also defines the pivot period.
 PLR_break2 = False          # Include a second break in the PLR at P = break_P2 for SN-host galaxies
 break_P2 = 35               # Period of the second PLR-break in days
-added_scatter = 0.0197      # Add dispersion to the Cepheids (See Moertsell et al. 2021, [2021arXiv210511461M])
+added_scatter = 0.0277      # Add dispersion to the Cepheids (See Moertsell et al. 2021, [2021arXiv210511461M])
 
 
 ### TRGB ###
-include_TRGB = True
+include_TRGB = False
 N_galaxies_TRGB = 12        # Number of SN-host galaxies
 N_anchors_TRGB = 1          # Number of anchors
 use_color = True            # Consider the color term (V-I) for the TRGB (See Anand et al. 2021, [2021AJ....162...80A])
@@ -40,7 +40,7 @@ z_max = 0.150               # Max redshift to consider when fitting for aB
 
 ### Outlier ###
 outlier_rejection = True    # Include kappa-clipping outlier rejection
-kappa = 3.3                 # Value for the kappa-clipping process
+kappa = 2.7                 # Value for the kappa-clipping process
 
 
 ### Relativistic corrections ###
@@ -55,7 +55,7 @@ FeH_TRGB = -1.75            # [Fe/H] term for the K-correction, within [-2., -1.
 
 
 ### Plot ###
-show_plots = True          # If you want to generate some plots
+show_plots = False          # If you want to generate some plots
 
 ### Physics constants
 c = 299792.458              # km/s
